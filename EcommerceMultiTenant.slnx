@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/Domains/" />
+  <Folder Name="/src/Domains/Identity/">
+    <Project Path="src/Domains/Identity/Identity.Api/Identity.Api.csproj" />
+    <Project Path="src/Domains/Identity/Identity.Application/Identity.Application.csproj" />
+    <Project Path="src/Domains/Identity/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/Domains/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Domains/Tests/">
+    <Project Path="src/Domains/Tests/Identity.Tests/Identity.Tests.csproj" />
+  </Folder>
+</Solution>

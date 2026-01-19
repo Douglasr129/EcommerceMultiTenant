@@ -9,6 +9,12 @@
     <File Path="docker-compose.yml" />
   </Folder>
   <Folder Name="/src/Domains/" />
+  <Folder Name="/src/Domains/Catalog/">
+    <Project Path="src/Domains/Catalog/Catalog.Api/Catalog.Api.csproj" Id="c31fbff5-1dd7-4737-9a29-b8c1a74875fe" />
+    <Project Path="src/Domains/Catalog/Catalog.Application/Catalog.Application.csproj" Id="0f07a527-a2ca-42a8-b329-35f2f99dec95" />
+    <Project Path="src/Domains/Catalog/Catalog.Domain/Catalog.Domain.csproj" Id="efa09770-5ebb-41e8-af77-04e4f9779c5c" />
+    <Project Path="src/Domains/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" Id="dde496ad-f940-457c-ac6f-be57af488c3f" />
+  </Folder>
   <Folder Name="/src/Domains/Identity/">
     <Project Path="src/Domains/Identity/Identity.Api/Identity.Api.csproj" />
     <Project Path="src/Domains/Identity/Identity.Application/Identity.Application.csproj" />

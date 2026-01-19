@@ -1,11 +1,8 @@
 # Identity Microservice
 
-[![Build Status](https://devdactic.blob.core.windows.net/build-status/dotnet-ecommerce/identity/build.svg)](https://devdactic.blob.core.windows.net/build-status/dotnet-ecommerce/identity/build.svg)
-[![Coverage Status](https://devdactic.blob.core.windows.net/build-status/dotnet-ecommerce/identity/coverage.svg)](https://devdactic.blob.core.windows.net/build-status/dotnet-ecommerce/identity/coverage.svg)
+## Descri√ß√£o
 
-## DescriÁ„o
-
-Este microserviÁo de Identity È o primeiro domÌnio do nosso sistema de e-commerce. Ele È respons·vel por gerenciar a autenticaÁ„o e autorizaÁ„o de usu·rios, fornecendo uma base segura para todos os outros microserviÁos.
+Este microservi√ßo de Identity √© o primeiro dom√≠nio do nosso sistema de e-commerce. Ele √© respons√°vel por gerenciar a autentica√ß√£o e autoriza√ß√£o de usu√°rios, fornecendo uma base segura para todos os outros microservi√ßos.
 
 **Tecnologias Utilizadas:**
 
@@ -24,21 +21,12 @@ O projeto adota uma arquitetura baseada em DDD, Clean Architecture, CQRS e Repos
 
 ## Funcionalidades Atuais
 
-- **Registro de Usu·rio:** CriaÁ„o de novas contas de usu·rio.
-- **Login de Usu·rio:** AutenticaÁ„o de usu·rios existentes.
-- **Gerenciamento de Token JWT:** GeraÁ„o e validaÁ„o de tokens JWT para autenticaÁ„o.
-- **HATEOAS:** Respostas API com links naveg·veis.
+- **Registro de Usu√°rio:** Cria√ß√£o de novas contas de usu√°rio.
+- **Login de Usu√°rio:** Autentica√ß√£o de usu√°rios existentes.
+- **Gerenciamento de Token JWT:** Gera√ß√£o e valida√ß√£o de tokens JWT para autentica√ß√£o.
+- **HATEOAS:** Respostas API com links naveg√°veis.
 
-## PrÛximos Passos
+## Pr√≥ximos Passos
 
-- ImplementaÁ„o de roles e permissıes.
-- IntegraÁ„o com outros microserviÁos do sistema de e-commerce.
-- Expans„o das funcionalidades de gerenciamento de usu·rio (reset de senha, etc.).
-
-## Como Contribuir
-
-Sinta-se ‡ vontade para contribuir para o projeto! Veja as [diretrizes de contribuiÁ„o](link_para_diretrizes_de_contribuicao).
-
-## LicenÁa
-
-MIT License - Veja o arquivo `LICENSE` para detalhes.
+- Integra√ß√£o com outros microservi√ßos do sistema de e-commerce.
+- Expans√£o das funcionalidades de gerenciamento de usu√°rio (reset de senha, etc.).

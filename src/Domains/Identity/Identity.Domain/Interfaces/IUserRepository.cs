@@ -1,9 +1,6 @@
 ﻿using Identity.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Identity.Application.Interfaces
+namespace Identity.Domain.Interfaces
 {
     public interface IUserRepository
     {

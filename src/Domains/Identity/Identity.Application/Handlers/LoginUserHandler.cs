@@ -1,8 +1,6 @@
 ﻿using Identity.Application.Commands;
-using Identity.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Identity.Domain.Interfaces;
+
 
 namespace Identity.Application.Handlers
 {
@@ -14,8 +12,7 @@ namespace Identity.Application.Handlers
 
         public async Task<string> Handle(LoginUserCommand command) 
         { 
-            var user = await _repository.GetByEmailAsync(command.Email);
-            if (user == null) throw new UnauthorizedAccessException("Usuário não encontrado");
+            var user = await _repository.GetByEmailAsync(command.Email) ?? throw new UnauthorizedAccessException("Usuário não encontrado");
             if (!_hasher.Verify(command.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Senha inválida.");
             return _tokenService.GenerateToken(user);

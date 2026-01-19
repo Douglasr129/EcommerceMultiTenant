@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Folder Name="/src/">
     <File Path="docker-compose.yml" />
   </Folder>
@@ -11,5 +17,8 @@
   </Folder>
   <Folder Name="/src/Domains/Tests/">
     <Project Path="src/Domains/Tests/Identity.Tests/Identity.Tests.csproj" />
+  </Folder>
+  <Folder Name="/src/Tests/">
+    <Project Path="src/Tests/Messaging.Tests/Messaging.Tests.csproj" Id="cd099238-f34c-4a47-ac73-7676a1b03acb" />
   </Folder>
 </Solution>

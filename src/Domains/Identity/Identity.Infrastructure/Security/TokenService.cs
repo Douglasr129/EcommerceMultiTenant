@@ -1,5 +1,5 @@
-﻿using Identity.Application.Interfaces;
-using Identity.Domain.Entities;
+﻿using Identity.Domain.Entities;
+using Identity.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

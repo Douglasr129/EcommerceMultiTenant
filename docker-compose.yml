@@ -19,5 +19,12 @@
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
       - "5050:80"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ecommerce_rabbitmq
+    ports:
+      - "5672:5672"   # Porta para comunicação
+      - "15672:15672" # Porta para painel de administração
+
 volumes:
   postgres_data:

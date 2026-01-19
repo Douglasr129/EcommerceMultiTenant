@@ -1,5 +1,5 @@
-﻿using Identity.Application.Interfaces;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
+using Identity.Domain.Interfaces;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Identity.Infrastructure.Security

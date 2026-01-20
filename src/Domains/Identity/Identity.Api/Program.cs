@@ -1,17 +1,19 @@
 ﻿using EvolveDb;
 using Identity.Application.Handlers;
+using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Configurations;
+using Identity.Infrastructure.Messaging;
 using Identity.Infrastructure.Repisitories;
 using Identity.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql;
-using System.Text;
-using Scalar.AspNetCore;
 using Microsoft.OpenApi;
-using Identity.Domain.Interfaces;
+using Npgsql;
+using RabbitMQ.Client;
+using Scalar.AspNetCore;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,9 +59,27 @@ cnx.Close();
 builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// PASSO 5: Conexão com Rabbitmq
+
+builder.Services.AddSingleton<IConnection>(sp =>
+{
+    var factory = new ConnectionFactory
+    {
+        HostName = "localhost",
+        Port = 5672,
+        UserName = "admin",
+        Password = "admin123",
+        VirtualHost = "/",
+    };
+
+    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+});
+
+
 // PASSO 5: Registrar serviços da aplicação
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<UserCreatedPublisher>();
 builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<LoginUserHandler>();
 builder.Services.AddScoped<ITokenService>(provider =>

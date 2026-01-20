@@ -15,7 +15,6 @@ namespace Identity.Api.Controllers
         [HttpPost("register")]
         //[ProducesResponseType(200, Type = typeof(Object))]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
         public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
             var id = await _registerHandler.Handle(command);
@@ -35,7 +34,6 @@ namespace Identity.Api.Controllers
         }
         [HttpPost("login")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
             var token = await _loginHandler.Handle(command);
@@ -57,9 +55,6 @@ namespace Identity.Api.Controllers
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-only")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(403)]
         public IActionResult AdminEndpoint()
         {
             return Ok("Acesso permitido apenas para Admin.");
@@ -68,9 +63,6 @@ namespace Identity.Api.Controllers
         [Authorize(Policy = "ManagerPolicy")]
         [HttpGet("manager-only")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(403)]
         public IActionResult ManagerEndpoint()
         {
             return Ok("Acesso permitido apenas para Manager.");

@@ -1,12 +1,10 @@
-﻿using Identity.Application.Interfaces;
-using Identity.Domain.Entities;
+﻿using Identity.Domain.Entities;
+using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Configurations;
 using Identity.Infrastructure.Security;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
-using Testcontainers.PostgreSql;
 
 namespace Identity.Tests.Integration
 {

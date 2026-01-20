@@ -1,5 +1,4 @@
 ﻿using Identity.Application.Commands;
-using Identity.Application.Interfaces;
 using Identity.Domain.Entities;
 using Identity.Infrastructure.Configurations;
 using Identity.Infrastructure.Security;

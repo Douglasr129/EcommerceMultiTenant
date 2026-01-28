@@ -1,7 +1,8 @@
-﻿using Catalog.Application.Commands;
+﻿using Catalog.Api.Models;
+using Catalog.Api.Services;
+using Catalog.Application.Commands;
 using Catalog.Application.Handlers;
 using Catalog.Application.Queries;
-using Catalog.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
@@ -15,7 +16,7 @@ namespace Catalog.Api.Controller
             UpdateProductHandler updateProductHandler,
             DeleteProductHandler deleteProductHandler,
             GetProductsByCategoryHandler getProductsByCategoryHandler,
-             UpdateStockHandler updateStockHandler) : ControllerBase
+            ILinkService linkService) : ControllerBase
     {
         private readonly CreateProductHandler _createProductHandler = createProductHandler;
         private readonly GetProductAllHandler _getProductAllHandler = getProductAllHandler;
@@ -23,94 +24,88 @@ namespace Catalog.Api.Controller
         private readonly UpdateProductHandler _updateProductHandler = updateProductHandler;
         private readonly DeleteProductHandler _deleteProductHandler = deleteProductHandler;
         private readonly GetProductsByCategoryHandler _getProductsByCategoryHandler = getProductsByCategoryHandler;
-        private readonly UpdateStockHandler _updateStockHandler = updateStockHandler;
+        private readonly ILinkService _linkService = linkService;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand command)
         {
-            try
-            {
-                var id = await _createProductHandler.Handle(command);
-                return CreatedAtAction(nameof(GetProductById), new { id });
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var id = await _createProductHandler.Handle(command);
+            var product = await _getProductByIdHandler.Handle(id);
+
+            var response = ProductResponse.FromProduct(product);
+            response.Links = _linkService.GenerateProductLinks(id);
+
+            return CreatedAtAction(nameof(GetProductById), new { id = id }, response);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ICollection<Product>>> GetProductAll()
-        {
-            try
-            {
-                var products = await _getProductAllHandler.Handle();
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Erro ao obter produtos");
-            }
-        }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProductById([FromBody] GetProductByIdQuery query)
+        public async Task<ActionResult<Product>> GetProductById(Guid id)
         {
-            try
+            var product = await _getProductByIdHandler.Handle(id);
+            if (product == null)
             {
-                var product = await _getProductByIdHandler.Handle(query);
-                if (product == null)
-                {
-                    return NotFound();
-                }
-                return Ok(product);
+                return NotFound();
             }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var response = ProductResponse.FromProduct(product);
+            response.Links = _linkService.GenerateProductLinks(id);
+
+            return Ok(response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
         {
-            try
-            {
-                var updatedProduct = await _updateProductHandler.Handle(command);
-                return Ok(updatedProduct);
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var updatedProduct = await _updateProductHandler.Handle(command);
+            return Ok(updatedProduct);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct([FromBody] DeleteProductCommand command)
+        public async Task<IActionResult> DeleteProduct(DeleteProductCommand command)
         {
-            try
+            await _deleteProductHandler.Handle(command);
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ICollection<Product>>> GetProductAll()
+        {
+            var products = await _getProductAllHandler.Handle();
+
+            var response = new
             {
-                await _deleteProductHandler.Handle(command);
-                return NoContent();
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                Products = products.Select(p =>
+                {
+                    var productResponse = ProductResponse.FromProduct(p);
+                    productResponse.Links = _linkService.GenerateProductLinks(p.Id);
+                    return productResponse;
+                }),
+                Links = _linkService.GenerateProductsLinks()
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("category/{categoryId}")]
         public async Task<ActionResult<ICollection<Product>>> GetProductsByCategory([FromBody] GetProductsByCategoryQuery query)
         {
-            try
+            var products = await _getProductsByCategoryHandler.Handle(query);
+
+            var response = new
             {
-                var products = await _getProductsByCategoryHandler.Handle(query);
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Erro ao obter produtos por categoria");
-            }
+                Products = products.Select(p =>
+                {
+                    var productResponse = ProductResponse.FromProduct(p);
+                    productResponse.Links = _linkService.GenerateProductLinks(p.Id);
+                    return productResponse;
+                }),
+                Links = _linkService.GenerateProductsLinks()
+            };
+            return Ok(response);
         }
     }
 

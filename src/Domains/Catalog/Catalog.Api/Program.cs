@@ -1,3 +1,6 @@
+using Catalog.Api.Configurations;
+using Catalog.Api.Middlewares;
+using Catalog.Api.Services;
 using Catalog.Application.Handlers;
 using Catalog.Domain.Interfaces;
 using Catalog.Infrastructure.Configurations;
@@ -19,7 +22,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // PASSO 1: Adicionar serviços de documentação ANTES de tudo
 // Swagger/OpenAPI precisa ser registrado para funcionar
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 builder.Services.AddEndpointsApiExplorer(); // Necessário para OpenAPI descobrir endpoints
 builder.Services.AddSwaggerGen(options => // Gera a documentação Swagger
 {
@@ -35,44 +42,36 @@ builder.Services.AddOpenApi();              // Gera o OpenAPI (v1.0)
 
 // PASSO 2: Configuração do banco de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var jwtSecretKey = builder.Configuration["Jwt:SecretKey"]!;
+
+// Validar se a string de conexão existe
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("A string de conexão 'DefaultConnection' não foi configurada.");
+}
+
+// PASSO 2.1: Configuração do JWT
+var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Ecommerce";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "EcommerceUsers";
+
+// Validar se a chave JWT existe
+if (string.IsNullOrEmpty(jwtSecretKey))
+{
+    throw new InvalidOperationException("A configuração 'Jwt:SecretKey' não foi encontrada. Verifique o appsettings.json ou variáveis de ambiente.");
+}
+
 var key = Encoding.UTF8.GetBytes(jwtSecretKey);
 
 // PASSO 3: Executar migrações com Evolve
-using var cnx = new NpgsqlConnection(connectionString);
-cnx.Open();
-Console.WriteLine("Conexão com o banco estabelecida com sucesso!");
-cnx.Close();
-
-var evolve = new Evolve(cnx, msg => Console.WriteLine(msg))
-{
-    Locations = ["../Catalog.Infrastructure/Migrations"],
-    IsEraseDisabled = true
-};
-
-evolve.Migrate();
-Console.WriteLine("Migrações executadas com sucesso!");
-cnx.Close();
+builder.Services.AddEvolveConfiguration(builder.Configuration, builder.Environment);
 
 // PASSO 4: Registrar DbContext
 builder.Services.AddDbContext<CatalogDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // PASSO 5: Conexão com Rabbitmq
-
-builder.Services.AddSingleton<IConnection>(sp =>
-{
-    var factory = new ConnectionFactory
-    {
-        HostName = "localhost",
-        Port = 5672,
-        UserName = "admin",
-        Password = "admin123",
-        VirtualHost = "/",
-    };
-
-    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
-});
+var rabbitMqConnectionString = builder.Configuration["RabbitMQ:ConnectionString"];
+builder.Services.AddRabbitMqConnection(rabbitMqConnectionString!);
 
 
 // PASSO 5: Registrar serviços da aplicação
@@ -80,6 +79,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddTransient(sp => new CreateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new CreateProductHandler(sp.GetRequiredService<IProductRepository>()));
+builder.Services.AddTransient(sp => new DeleteCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new DeleteProductHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new GetCategoryAllHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new GetCategoryByIdHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new GetProductAllHandler(sp.GetRequiredService<IProductRepository>()));
@@ -88,6 +89,7 @@ builder.Services.AddTransient(sp => new GetProductsByCategoryHandler(sp.GetRequi
 builder.Services.AddTransient(sp => new UpdateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new UpdateProductHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new UpdateStockHandler(sp.GetRequiredService<IProductRepository>()));
+
 
 
 // PASSO 6: Configurar autenticação JWT
@@ -117,8 +119,17 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("SellerPolicy", policy => policy.RequireRole("Seller"))
     .AddPolicy("CustomerPolicy", policy => policy.RequireRole("Customer"));
 
-// PASSO 8: Construir a aplicação
+
+// PASSO 8: Construir HATEOAS
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ILinkService, LinkService>();
+
+// PASSO 9: Construir a aplicação
 var app = builder.Build();
+
+// Middleware global de tratamento de erros
+app.UseGlobalErrorHandler();
+
 
 if (app.Environment.IsDevelopment())
 {

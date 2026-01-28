@@ -1,8 +1,8 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
+
 using System.Text;
+using System.Text.Json;
 
 namespace Catalog.Infrastructure.Messaging
 {
@@ -21,9 +21,7 @@ namespace Catalog.Infrastructure.Messaging
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-
-                Console.WriteLine($"[Catalog] Pedido recebido: {message}");
-                // Aqui poderíamos atualizar o estoque dos produtos
+                var order = JsonSerializer.Deserialize<dynamic>(message);
                 return Task.CompletedTask;
             };
 

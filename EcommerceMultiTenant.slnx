@@ -22,6 +22,7 @@
     <Project Path="src/Domains/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Domains/Tests/">
+    <Project Path="src/Domains/Tests/Catalog.Tests/Catalog.Tests.csproj" Id="70ed9d47-2dbd-4575-9304-17e34ccbc365" />
     <Project Path="src/Domains/Tests/Identity.Tests/Identity.Tests.csproj" />
   </Folder>
   <Folder Name="/src/Tests/">

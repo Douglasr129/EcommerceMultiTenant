@@ -3,20 +3,14 @@ using Catalog.Domain.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("product")]
 public class Product
 {
     [Key]
     [Column("id", TypeName = "uuid")]
     public Guid Id { get; private set; }
 
-    [Required(ErrorMessage = "Nome do produto é obrigatório")]
     [Column("name", TypeName = "varchar(255)")]
     public string Name { get; private set; }
-
-    [Required(ErrorMessage = "O valor do produto é obrigatório")]
-    [Column("price", TypeName = "numeric(18,2)")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
     public Money Price { get; private set; }
 
     [Column("stock", TypeName = "integer")]
@@ -25,6 +19,17 @@ public class Product
 
     [Column("category_id", TypeName = "uuid")]
     public Guid? CategoryId { get; private set; }
+    // Construtor sem parâmetros (necessário para o EF)
+    public Product()
+    {
+        // Inicializa propriedades com valores padrão
+        Id = Guid.NewGuid();
+        Name = string.Empty;
+        Price = new Money(0, "BRL");
+        Stock = 0;
+        CategoryId = null;
+    }
+
 
     // Construtor único - sempre valida
     public Product(string name, Money price, int stock, Guid? categoryId)

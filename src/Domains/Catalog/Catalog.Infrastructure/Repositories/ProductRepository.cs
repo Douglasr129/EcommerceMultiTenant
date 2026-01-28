@@ -13,9 +13,16 @@ namespace Catalog.Infrastructure.Repositories
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
+            try
+            {
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception x)
+            {
 
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
+                throw;
+            }
         }
 
         public async Task DeleteProduct(Guid id)

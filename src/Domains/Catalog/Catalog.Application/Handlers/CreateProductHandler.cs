@@ -16,7 +16,7 @@ namespace Catalog.Application.Handlers
             var product = new Product(
                 command.Name,
                 price,
-                command.StockInicial,  // Obrigatório na criação
+                command.StockInicial, 
                 command.CategoryId
             );
 

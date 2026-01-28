@@ -19,6 +19,7 @@ namespace Identity.Tests.Integration
                 .WithUsername("admin")
                 .WithPassword("admin123")
                 .Build();
+
         }
 
 

@@ -11,9 +11,9 @@ namespace Catalog.Application.Handlers
     {
         private readonly IProductRepository _repository = repository;
 
-        public async Task<Product> Handle(GetProductByIdQuery query)
+        public async Task<Product> Handle(Guid id)
         {
-            return await _repository.GetProductById (query.ProductId);
+            return await _repository.GetProductById (id);
         }
     }
 

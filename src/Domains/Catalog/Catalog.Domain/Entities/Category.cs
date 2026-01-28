@@ -16,6 +16,11 @@ namespace Catalog.Domain.Entities
         [Required(ErrorMessage = "Nome da categoria é obrigatório")]
         [Column("name", TypeName = "varchar(255)")]
         public string Name { get; private set; }
+        public Category()
+        {
+            Id = Guid.NewGuid();
+            Name = string.Empty;
+        }
 
         public Category(string name)
         {

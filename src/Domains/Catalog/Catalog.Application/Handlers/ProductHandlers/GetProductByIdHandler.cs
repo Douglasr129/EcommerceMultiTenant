@@ -1,11 +1,7 @@
-﻿using Catalog.Application.Queries;
-using Catalog.Domain.Entities;
-using Catalog.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Catalog.Domain.Interfaces;
 
-namespace Catalog.Application.Handlers
+
+namespace Catalog.Application.Handlers.ProductHandlers
 {
     public class GetProductByIdHandler(IProductRepository repository)
     {

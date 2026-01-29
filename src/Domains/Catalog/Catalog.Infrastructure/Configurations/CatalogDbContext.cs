@@ -53,18 +53,23 @@ namespace Catalog.Infrastructure.Configurations
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            foreach (var entry in ChangeTracker.Entries().Where(entry => entry.Entity.GetType().GetProperty("created_at") != null))
+            foreach (var entry in ChangeTracker.Entries())
             {
+                var entityType = entry.Entity.GetType();
+                var createdProperty = entityType.GetProperty("created_at");
+                var updatedProperty = entityType.GetProperty("updated_at");
+
+                if (createdProperty == null || updatedProperty == null) continue;
+
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property("created_at").CurrentValue = DateTime.Now;
-                    entry.Property("updated_at").CurrentValue = DateTime.Now;
+                    entry.Property("created_at").CurrentValue = DateTime.UtcNow;
+                    entry.Property("updated_at").CurrentValue = DateTime.UtcNow;
                 }
 
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property("created_at").IsModified = false;
-                    entry.Property("updated_at").CurrentValue = DateTime.Now;
+                    entry.Property("updated_at").CurrentValue = DateTime.UtcNow;
                 }
             }
 

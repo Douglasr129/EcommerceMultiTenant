@@ -1,10 +1,8 @@
-﻿using Catalog.Application.Commands;
-using Catalog.Application.Queries;
-using Catalog.Domain.Entities;
+﻿using Catalog.Application.Commands.ProductCommands;
 using Catalog.Domain.Interfaces;
 using Catalog.Domain.ValueObjects;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.ProductHandlers
 {
     public class CreateProductHandler(IProductRepository repository)
     {

@@ -1,11 +1,16 @@
 ﻿using Catalog.Api.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Catalog.Api.Services
 {
     public interface ILinkService
     {
         List<Link> GenerateProductLinks(Guid productId);
+        List<Link> GenerateProductByCategoryIdLinks(Guid productId);
         List<Link> GenerateProductsLinks();
+
+        List<Link> GenerateCategoryLinks(Guid productId);
+        List<Link> GenerateCategorysLinks();
     }
 
     public class LinkService : ILinkService
@@ -51,13 +56,22 @@ namespace Catalog.Api.Services
             );
             links.Add(new Link(deleteLink!, "delete", "DELETE"));
 
+            
+
+            return links;
+        }
+        public List<Link> GenerateProductByCategoryIdLinks(Guid CategoryId)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var links = new List<Link>();
             // All products link
             var productsAllLink = _linkGenerator.GetUriByAction(
                 httpContext!,
-                action: "GetProductAll",
-                controller: "Products"
+                action: "GetProductsByCategory",
+                controller: "Products",
+                 values: new { id = CategoryId }
             );
-            links.Add(new Link(productsAllLink!, "all-products", "GET"));
+            links.Add(new Link(productsAllLink!, "all-products-by-category", "GET"));
 
             return links;
         }
@@ -69,21 +83,76 @@ namespace Catalog.Api.Services
 
             // Self link
             var selfLink = _linkGenerator.GetUriByAction(
-                httpContext,
+                httpContext!,
                 action: "GetAllProducts",
                 controller: "Products"
             );
-            links.Add(new Link(selfLink, "self", "GET"));
+            links.Add(new Link(selfLink!, "self", "GET"));
 
             // Create link
             var createLink = _linkGenerator.GetUriByAction(
-                httpContext,
+                httpContext!,
                 action: "AddProduct",
                 controller: "Products"
             );
-            links.Add(new Link(createLink, "create", "POST"));
+            links.Add(new Link(createLink!, "create", "a"));
 
             return links;
         }
+
+
+
+        public List<Link> GenerateCategoryLinks(Guid categoryId)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var links = new List<Link>();
+
+            // Self link
+            var selfLink = _linkGenerator.GetUriByAction(
+                httpContext!,
+                action: "GetCategoryById",
+                controller: "Categories",
+                values: new { id = categoryId }
+            );
+            links.Add(new Link(selfLink!, "self", "GET"));
+
+            // Update link
+            var updateLink = _linkGenerator.GetUriByAction(
+                httpContext!,
+                action: "UpdateCategory",
+                controller: "Categories",
+                values: new { id = categoryId }
+            );
+            links.Add(new Link(updateLink!, "update", "PUT"));
+
+            // Delete link
+            var deleteLink = _linkGenerator.GetUriByAction(
+                httpContext!,
+                action: "DeleteCategory",
+                controller: "Categories",
+                values: new { id = categoryId }
+            );
+            links.Add(new Link(deleteLink!, "delete", "DELETE"));
+
+            return links;
+        }
+
+        public List<Link> GenerateCategorysLinks()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var links = new List<Link>();
+
+            // Self link
+            var selfLink = _linkGenerator.GetUriByAction(
+                httpContext!,
+                action: "GetCategoryAll",
+                controller: "Products"
+            );
+            links.Add(new Link(selfLink!, "self", "GET"));
+
+            return links;
+        }
+
+
     }
 }

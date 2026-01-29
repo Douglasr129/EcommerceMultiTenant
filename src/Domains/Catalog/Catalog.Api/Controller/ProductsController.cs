@@ -1,8 +1,7 @@
 ﻿using Catalog.Api.Models;
 using Catalog.Api.Services;
-using Catalog.Application.Commands;
-using Catalog.Application.Handlers;
-using Catalog.Application.Queries;
+using Catalog.Application.Commands.ProductCommands;
+using Catalog.Application.Handlers.ProductHandlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
@@ -16,6 +15,7 @@ namespace Catalog.Api.Controller
             UpdateProductHandler updateProductHandler,
             DeleteProductHandler deleteProductHandler,
             GetProductsByCategoryHandler getProductsByCategoryHandler,
+            UpdateProductsByCategoryHandler updateProductsByCategoryHandler,
             ILinkService linkService) : ControllerBase
     {
         private readonly CreateProductHandler _createProductHandler = createProductHandler;
@@ -24,12 +24,13 @@ namespace Catalog.Api.Controller
         private readonly UpdateProductHandler _updateProductHandler = updateProductHandler;
         private readonly DeleteProductHandler _deleteProductHandler = deleteProductHandler;
         private readonly GetProductsByCategoryHandler _getProductsByCategoryHandler = getProductsByCategoryHandler;
+        private readonly UpdateProductsByCategoryHandler _updateProductsByCategoryHandler = updateProductsByCategoryHandler;
         private readonly ILinkService _linkService = linkService;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand command)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
 
             var id = await _createProductHandler.Handle(command);
             var product = await _getProductByIdHandler.Handle(id);
@@ -57,17 +58,18 @@ namespace Catalog.Api.Controller
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductCommand command)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
+            if(!id.Equals(command.ProductId)) return BadRequest(new { error = "Os IDs não conferem" });
             var updatedProduct = await _updateProductHandler.Handle(command);
             return Ok(updatedProduct);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(DeleteProductCommand command)
+        public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            await _deleteProductHandler.Handle(command);
+            await _deleteProductHandler.Handle(id);
             return NoContent();
         }
 
@@ -91,21 +93,28 @@ namespace Catalog.Api.Controller
         }
 
         [HttpGet("category/{categoryId}")]
-        public async Task<ActionResult<ICollection<Product>>> GetProductsByCategory([FromBody] GetProductsByCategoryQuery query)
+        public async Task<ActionResult<ICollection<Product>>> GetProductsByCategory(Guid categoryId)
         {
-            var products = await _getProductsByCategoryHandler.Handle(query);
+            var products = await _getProductsByCategoryHandler.Handle(categoryId);
 
             var response = new
             {
                 Products = products.Select(p =>
                 {
                     var productResponse = ProductResponse.FromProduct(p);
-                    productResponse.Links = _linkService.GenerateProductLinks(p.Id);
+                    productResponse.Links = _linkService.GenerateProductByCategoryIdLinks(p.Id);
                     return productResponse;
                 }),
                 Links = _linkService.GenerateProductsLinks()
             };
             return Ok(response);
+        }
+        [HttpPut("category/{categoryId}/product/{productId}")]
+        public async Task<ActionResult<ICollection<Product>>> UpdateProductsByCategory(Guid categoryId, Guid productId)
+        {
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
+            var product = await _updateProductsByCategoryHandler.Handle(categoryId, productId);
+            return Ok(product);
         }
     }
 

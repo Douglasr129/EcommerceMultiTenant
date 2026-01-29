@@ -1,10 +1,9 @@
-﻿using Catalog.Application.Commands;
-using Catalog.Application.Handlers;
-using Catalog.Application.Queries;
+﻿using Catalog.Api.Models;
+using Catalog.Api.Services;
+using Catalog.Application.Commands.CategoryCommands;
+using Catalog.Application.Handlers.CategoryHandlers;
+using Catalog.Application.Handlers.ProductHandlers;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Exceptions;
-using Catalog.Domain.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
@@ -15,72 +14,82 @@ namespace Catalog.Api.Controller
             CreateCategoryHandler createCategoryHandler, 
             GetCategoryAllHandler getCategoryAllHandler, 
             GetCategoryByIdHandler getCategoryByIdHandler, 
-            UpdateCategoryHandler updateCategoryHandler) : ControllerBase
+            UpdateCategoryHandler updateCategoryHandler,
+            DeleteCategoryHandler deleteCategoryHandler,
+            ILinkService linkService) : ControllerBase
     {
         private readonly CreateCategoryHandler _createCategoryHandler = createCategoryHandler;
         private readonly GetCategoryAllHandler _getCategoryAllHandler = getCategoryAllHandler;
         private readonly GetCategoryByIdHandler _getCategoryByIdHandler = getCategoryByIdHandler;
         private readonly UpdateCategoryHandler _updateCategoryHandler = updateCategoryHandler;
+        private readonly DeleteCategoryHandler _deleteCategoryHandler = deleteCategoryHandler;
+        private readonly ILinkService _linkService = linkService;
 
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] CreateCategoryCommand command)
         {
-            try
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
+
+            var id = await _createCategoryHandler.Handle(command);
+            var category = await _getCategoryByIdHandler.Handle(id);
+
+            var response = CategoryResponse.FromCategory(category);
+            response.Links = _linkService.GenerateCategoryLinks(id);
+
+            return CreatedAtAction(nameof(GetCategoryById), new { id = id }, response);
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Category>> GetCategoryById(Guid id)
+        {
+            var category = await _getCategoryByIdHandler.Handle(id);
+            if (category == null)
             {
-                var id = await _createCategoryHandler.Handle(command);
-                return CreatedAtAction(nameof(GetCategoryById), new { id });
+                return NotFound();
             }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var response = CategoryResponse.FromCategory(category);
+            response.Links = _linkService.GenerateCategoryLinks(id);
+
+            return Ok(response);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryCommand command)
+        {
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
+            if (!id.Equals(command.CategoryId)) return BadRequest(new { error = "Os IDs não conferem" });
+            var updatedCategory = await _updateCategoryHandler.Handle(command);
+            return Ok(updatedCategory);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(Guid id)
+        {
+            await _deleteCategoryHandler.Handle(id);
+            return NoContent();
         }
 
         [HttpGet]
         public async Task<ActionResult<ICollection<Category>>> GetCategoryAll()
         {
-            try
-            {
-                var categories = await _getCategoryAllHandler.Handle();
-                return Ok(categories);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Erro ao obter categorias");
-            }
-        }
+            var Categorys = await _getCategoryAllHandler.Handle();
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategoryById([FromBody] GetCategoryByIdQuery guery)
-        {
-            try
+            var response = new
             {
-                var category = await _getCategoryByIdHandler.Handle(guery);
-                if (category == null)
+                Categorys = Categorys.Select(p =>
                 {
-                    return NotFound();
-                }
-                return Ok(category);
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                    var categoryResponse = CategoryResponse.FromCategory(p);
+                    categoryResponse.Links = _linkService.GenerateCategoryLinks(p.Id);
+                    return categoryResponse;
+                }),
+                Links = _linkService.GenerateCategorysLinks()
+            };
+
+            return Ok(response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryCommand command)
-        {
-            try
-            {
-                var updatedCategory = await _updateCategoryHandler.Handle(command);
-                return Ok(updatedCategory);
-            }
-            catch (DomainException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
     }
 
 }

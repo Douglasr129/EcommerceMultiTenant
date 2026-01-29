@@ -1,16 +1,15 @@
-﻿using Catalog.Application.Commands;
-using Catalog.Domain.Entities;
+﻿using Catalog.Application.Commands.ProductCommands;
 using Catalog.Tests.Integration.Tools;
 using System.Net;
 using System.Net.Http.Json;
-using System.Xml.Linq;
+using System.Text.Json;
 
 namespace Catalog.Tests.Integration
 {
     public class ProductsControllerTests : BaseIntegrationTests
     {
         [Fact]
-        public async Task AddProduct_DeveCriarProdutoERetornarCreated()
+        public async Task Should_Generate_Exception_If_CategoryId_Does_Not_Match()
         {
             // Arrange
             var command = new CreateProductCommand
@@ -23,11 +22,13 @@ namespace Catalog.Tests.Integration
 
             // Act
             var response = await _httpClient.PostAsJsonAsync("/api/catalog/products", command);
+            var content = await response.Content.ReadAsStringAsync();
+            var jsonDocument = JsonDocument.Parse(content);
+            var errorMessage = jsonDocument.RootElement.GetProperty("error").GetString();
 
             // Assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(response.Headers.Location);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("Categoria não encontrado", errorMessage);
         }
-
     }
 }

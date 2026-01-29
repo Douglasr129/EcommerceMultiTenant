@@ -13,16 +13,20 @@ namespace Catalog.Infrastructure.Repositories
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
-            try
+            if (product.CategoryId is not null)
             {
-                await _context.Products.AddAsync(product);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception x)
-            {
+                if (await ValidateCategory(product.CategoryId.Value))
+                {
+                    await _context.Products.AddAsync(product);
+                    await _context.SaveChangesAsync();
+                }
+                else 
+                {
+                    throw new DomainException("Categoria não encontrado");
+                }
 
-                throw;
             }
+
         }
 
         public async Task DeleteProduct(Guid id)
@@ -66,15 +70,43 @@ namespace Catalog.Infrastructure.Repositories
 
             var existingProduct = await _context.Products.FindAsync(product.Id)
                 ?? throw new DomainException("Produto não encontrado");
-
-            // Atualizar apenas os campos permitidos
-            existingProduct.UpdatePrice(product.Price);
-            existingProduct.UpdateStock(product.Stock - existingProduct.Stock);
+            if (!existingProduct.Name.Equals(product.Name))
+            {
+                existingProduct.UpdateName(product.Name);
+            }
+            if (!existingProduct.Price.Amount.Equals(product.Price.Amount))
+            {
+                existingProduct.UpdatePrice(product.Price);
+            }
+            if (!existingProduct.CategoryId.Equals(product.CategoryId))
+            {
+                if (product.CategoryId is not null)
+                {
+                    if (await ValidateCategory(product.CategoryId.Value))
+                    {
+                        existingProduct.UpdateCategory(product.CategoryId.Value);
+                    }
+                }
+            }
+            if (existingProduct.Stock != product.Stock)
+            {
+                existingProduct.UpdateStock(product.Stock - existingProduct.Stock);
+            }
 
             _context.Products.Update(existingProduct);
             await _context.SaveChangesAsync();
 
             return existingProduct;
+        }
+        private async Task<bool> ValidateCategory(Guid categoryId)
+        {
+            var categoria = await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == categoryId);
+            if (categoria != null) return true;
+            return false;
+
+
         }
     }
 }

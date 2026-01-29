@@ -1,9 +1,9 @@
-﻿using Catalog.Application.Commands;
+﻿using Catalog.Application.Commands.ProductCommands;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Exceptions;
 using Catalog.Domain.Interfaces;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.ProductHandlers
 {
     public class UpdateStockHandler(IProductRepository repository)
     {

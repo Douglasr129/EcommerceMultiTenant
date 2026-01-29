@@ -1,4 +1,4 @@
-﻿namespace Catalog.Application.Commands
+﻿namespace Catalog.Application.Commands.CategoryCommands
 {
     public class CreateCategoryCommand
     {

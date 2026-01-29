@@ -1,19 +1,17 @@
 using Catalog.Api.Configurations;
 using Catalog.Api.Middlewares;
 using Catalog.Api.Services;
-using Catalog.Application.Handlers;
+using Catalog.Application.Handlers.CategoryHandlers;
+using Catalog.Application.Handlers.ProductHandlers;
 using Catalog.Domain.Interfaces;
 using Catalog.Infrastructure.Configurations;
 using Catalog.Infrastructure.Repositories;
-using EvolveDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Npgsql;
-using RabbitMQ.Client;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -75,20 +73,24 @@ builder.Services.AddRabbitMqConnection(rabbitMqConnectionString!);
 
 
 // PASSO 5: Registrar serviços da aplicação
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddTransient(sp => new CreateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
-builder.Services.AddTransient(sp => new CreateProductHandler(sp.GetRequiredService<IProductRepository>()));
-builder.Services.AddTransient(sp => new DeleteCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new DeleteProductHandler(sp.GetRequiredService<IProductRepository>()));
-builder.Services.AddTransient(sp => new GetCategoryAllHandler(sp.GetRequiredService<ICategoryRepository>()));
-builder.Services.AddTransient(sp => new GetCategoryByIdHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new CreateProductHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new GetProductAllHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new GetProductByIdHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new GetProductsByCategoryHandler(sp.GetRequiredService<IProductRepository>()));
-builder.Services.AddTransient(sp => new UpdateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
 builder.Services.AddTransient(sp => new UpdateProductHandler(sp.GetRequiredService<IProductRepository>()));
 builder.Services.AddTransient(sp => new UpdateStockHandler(sp.GetRequiredService<IProductRepository>()));
+builder.Services.AddTransient(sp => new UpdateProductsByCategoryHandler(sp.GetRequiredService<IProductRepository>()));
+
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient(sp => new CreateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new DeleteCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new GetCategoryAllHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new GetCategoryByIdHandler(sp.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddTransient(sp => new UpdateCategoryHandler(sp.GetRequiredService<ICategoryRepository>()));
 
 
 

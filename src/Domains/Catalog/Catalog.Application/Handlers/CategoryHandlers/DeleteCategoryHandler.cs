@@ -5,15 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.CategoryHandlers
 {
     public class DeleteCategoryHandler(ICategoryRepository repository)
     {
 
         private readonly ICategoryRepository _repository = repository;
-        public async Task Handle(DeleteProductCommand command)
+        public async Task Handle(Guid id)
         {
-            var product = await _repository.GetCategoryById(command.ProductId);
+            var product = await _repository.GetCategoryById(id);
 
             if (product == null)
                 throw new DomainException("Produto não encontrado");

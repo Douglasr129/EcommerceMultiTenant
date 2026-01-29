@@ -1,4 +1,4 @@
-﻿using Catalog.Application.Commands;
+﻿using Catalog.Application.Commands.CategoryCommands;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Exceptions;
 using Catalog.Domain.Interfaces;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.CategoryHandlers
 {
     public class UpdateCategoryHandler(ICategoryRepository repository)
     {

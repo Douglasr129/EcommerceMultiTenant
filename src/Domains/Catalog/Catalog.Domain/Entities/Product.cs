@@ -45,12 +45,16 @@ public class Product
         Stock = stock;
         CategoryId = categoryId;
     }
-
+    public void UpdateName(string name)
+    {
+        if (name ==null || name.Length < 3)
+            throw new DomainException("Nome invalido");
+        Name = name;
+    }
     public void UpdatePrice(Money newPrice)
     {
         if (newPrice == null)
             throw new DomainException("Preço inválido");
-
         Price = newPrice;
     }
 
@@ -60,5 +64,9 @@ public class Product
             throw new DomainException("Estoque insuficiente");
 
         Stock += quantity;
+    }
+    public void UpdateCategory(Guid categoryID)
+    {
+        CategoryId = categoryID;
     }
 }

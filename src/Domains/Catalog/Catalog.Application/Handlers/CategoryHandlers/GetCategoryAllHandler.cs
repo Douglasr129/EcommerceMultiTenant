@@ -1,7 +1,7 @@
 ﻿using Catalog.Domain.Entities;
 using Catalog.Domain.Interfaces;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.CategoryHandlers
 {
     public class GetCategoryAllHandler(ICategoryRepository repository)
     {

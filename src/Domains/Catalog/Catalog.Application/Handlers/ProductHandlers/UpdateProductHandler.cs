@@ -1,14 +1,9 @@
-﻿using Catalog.Application.Commands;
-using Catalog.Application.Queries;
-using Catalog.Domain.Entities;
+﻿using Catalog.Application.Commands.ProductCommands;
 using Catalog.Domain.Exceptions;
 using Catalog.Domain.Interfaces;
 using Catalog.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.ProductHandlers
 {
     public class UpdateProductHandler(IProductRepository repository)
     {

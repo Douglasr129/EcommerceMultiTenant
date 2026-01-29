@@ -1,8 +1,8 @@
-﻿using Catalog.Application.Commands;
+﻿using Catalog.Application.Commands.CategoryCommands;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Interfaces;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.CategoryHandlers
 {
     public class CreateCategoryHandler(ICategoryRepository categoryRepository)
     {

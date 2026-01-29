@@ -1,6 +1,6 @@
 ﻿using Catalog.Domain.Interfaces;
 
-namespace Catalog.Application.Handlers
+namespace Catalog.Application.Handlers.ProductHandlers
 {
     public class GetProductAllHandler(IProductRepository repository)
     {

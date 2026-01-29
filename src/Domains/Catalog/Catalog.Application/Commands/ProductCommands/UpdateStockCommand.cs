@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Catalog.Application.Commands
+namespace Catalog.Application.Commands.ProductCommands
 {
     public class UpdateStockCommand
     {

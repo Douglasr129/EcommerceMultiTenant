@@ -22,8 +22,10 @@ namespace Catalog.Api.Controller
             GetProductByIdHandler getProductByIdHandler,
             UpdateProductHandler updateProductHandler,
             DeleteProductHandler deleteProductHandler,
+            UpdateStockHandler updateStockHandler,
             GetProductsByCategoryHandler getProductsByCategoryHandler,
             UpdateProductsByCategoryHandler updateProductsByCategoryHandler,
+            UpdateStockCommand updateStockCommand,
             ILinkService linkService) : ControllerBase
     {
         private readonly CreateProductHandler _createProductHandler = createProductHandler;
@@ -31,18 +33,12 @@ namespace Catalog.Api.Controller
         private readonly GetProductByIdHandler _getProductByIdHandler = getProductByIdHandler;
         private readonly UpdateProductHandler _updateProductHandler = updateProductHandler;
         private readonly DeleteProductHandler _deleteProductHandler = deleteProductHandler;
+        private readonly UpdateStockHandler _updateStockHandler = updateStockHandler;
         private readonly GetProductsByCategoryHandler _getProductsByCategoryHandler = getProductsByCategoryHandler;
         private readonly UpdateProductsByCategoryHandler _updateProductsByCategoryHandler = updateProductsByCategoryHandler;
+        private readonly UpdateStockCommand _updateStockCommand = updateStockCommand;
         private readonly ILinkService _linkService = linkService;
 
-        /// <summary>
-        /// Cria um novo produto no catálogo
-        /// </summary>
-        /// <param name="command">Dados do produto a ser criado</param>
-        /// <returns>Produto criado com sucesso</returns>
-        /// <response code="201">Produto criado com sucesso</response>
-        /// <response code="400">Dados inválidos ou categoria não encontrada</response>
-        /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddProduct([FromBody] CreateProductCommand command)
@@ -94,6 +90,7 @@ namespace Catalog.Api.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<Product>>> GetProductAll()
         {
@@ -138,6 +135,22 @@ namespace Catalog.Api.Controller
             if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
             var product = await _updateProductsByCategoryHandler.Handle(categoryId, productId);
             return Ok(product);
+        }
+        [HttpPut("product/{id}/addstock/{amount}")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateProduct(Guid id, int amount)
+        {
+            if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
+            
+            var product = await _getProductByIdHandler.Handle(id);
+            var command = new UpdateStockCommand
+            {
+                ProductId = id,
+                amount = amount
+            };
+
+            var updatedProduct = await _updateStockHandler.Handle(command);
+            return Ok(updatedProduct);
         }
     }
 

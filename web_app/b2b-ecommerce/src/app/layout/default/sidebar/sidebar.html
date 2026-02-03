@@ -1,0 +1,23 @@
+<div class="sidebar">
+  <ul>
+    @if (role === "Admin") {
+      <li class="nav-item">
+        <a class="nav-link text-light" routerLink="/admin/dashboard"
+          >Dashboard</a
+        >
+      </li>
+    }
+    @if (role === "Seller") {
+      <li class="nav-item">
+        <a class="nav-link text-light" routerLink="/seller/products"
+          >Produtos</a
+        >
+      </li>
+    }
+    @if (role === "Client") {
+      <li class="nav-item">
+        <a class="nav-link text-light" routerLink="/client/catalog">Catálogo</a>
+      </li>
+    }
+  </ul>
+</div>

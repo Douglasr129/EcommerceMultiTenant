@@ -26,6 +26,11 @@ namespace Catalog.Infrastructure.Repositories
                 }
 
             }
+            else
+            {
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+            }
 
         }
 

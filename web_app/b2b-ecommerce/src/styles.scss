@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+.app-container {
+  display: flex;
+  min-height: calc(100vh - 60px); // desconta header/footer
+}
+
+.app-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 220px;
+}

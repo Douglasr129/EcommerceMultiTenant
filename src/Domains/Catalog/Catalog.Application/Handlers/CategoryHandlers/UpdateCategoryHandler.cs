@@ -19,9 +19,9 @@ namespace Catalog.Application.Handlers.CategoryHandlers
 
             if (category == null)
                 throw new DomainException("Categoria não encontrado");
-         
-            // Não toca no estoque aqui!
 
+            // Não toca no estoque aqui!
+            category.UpdateName(command.Name);
             return await _repository.UpdateCategory(category);
         }
     }

@@ -1,15 +1,23 @@
-﻿using Catalog.Api.Models;
+﻿using Catalog.Api.Middlewares;
+using Catalog.Api.Models;
 using Catalog.Api.Services;
 using Catalog.Application.Commands.CategoryCommands;
 using Catalog.Application.Handlers.CategoryHandlers;
 using Catalog.Application.Handlers.ProductHandlers;
 using Catalog.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
 {
     [ApiController]
     [Route("api/catalog/categories")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+    [Authorize(Roles = "Admin,Manager")]
     public class CategoriesController(
             CreateCategoryHandler createCategoryHandler, 
             GetCategoryAllHandler getCategoryAllHandler, 
@@ -26,6 +34,7 @@ namespace Catalog.Api.Controller
         private readonly ILinkService _linkService = linkService;
 
         [HttpPost]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddCategory([FromBody] CreateCategoryCommand command)
         {
             if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
@@ -41,6 +50,7 @@ namespace Catalog.Api.Controller
 
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<Category>> GetCategoryById(Guid id)
         {
             var category = await _getCategoryByIdHandler.Handle(id);
@@ -56,6 +66,7 @@ namespace Catalog.Api.Controller
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryCommand command)
         {
             if (!ModelState.IsValid) return BadRequest(new { error = ModelState });
@@ -65,6 +76,7 @@ namespace Catalog.Api.Controller
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
             await _deleteCategoryHandler.Handle(id);
@@ -72,6 +84,7 @@ namespace Catalog.Api.Controller
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<Category>>> GetCategoryAll()
         {
             var Categorys = await _getCategoryAllHandler.Handle();

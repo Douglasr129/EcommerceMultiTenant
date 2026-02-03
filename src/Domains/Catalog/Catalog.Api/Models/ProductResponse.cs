@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public decimal PriceAmount { get; set; }
         public string PriceCurrency { get; set; }
+        public int Stock { get; set; }
         // Adicione outros campos conforme necessário
 
         public static ProductResponse FromProduct(Product product)
@@ -15,7 +16,8 @@
                 Id = product.Id,
                 Name = product.Name,
                 PriceAmount = product.Price.Amount,
-                PriceCurrency = product.Price.Currency
+                PriceCurrency = product.Price.Currency,
+                Stock = product.Stock
             };
         }
     }

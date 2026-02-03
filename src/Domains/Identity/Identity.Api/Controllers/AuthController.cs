@@ -18,10 +18,20 @@ namespace Identity.Api.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
             var id = await _registerHandler.Handle(command);
-
+            if (string.IsNullOrEmpty(id.ToString()))
+            {
+                return BadRequest(new { error = "" });
+            }
+            var commandlogin = new LoginUserCommand
+            {
+                Email = command.Email,
+                Password = command.Password
+            };
+            var token = await _loginHandler.Handle(commandlogin);
             var response = new
             {
                 UserId = id,
+                Token = token,
                 Links = new[]
                 {
                     new { Rel = "self", Href = $"/api/auth/register" },

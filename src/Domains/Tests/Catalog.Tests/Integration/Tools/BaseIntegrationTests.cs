@@ -1,7 +1,11 @@
 ﻿using Catalog.Api.Configurations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RabbitMQ.Client;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 
@@ -12,12 +16,13 @@ namespace Catalog.Tests.Integration.Tools
         protected PostgreSqlContainer _dbContainer { get; private set; }
         protected RabbitMqContainer _rabbitMqContainer { get; private set; }
         protected CustomWebApplicationFactory<Program> _factory { get; private set; }
+        protected JwtTokenGenerator _tokenGenerator { get; private set; }
 
         protected HttpClient _httpClient { get; private set; }
         protected IConnection _rabbitMqConnection { get; private set; }
         protected string DatabaseConnectionString => _dbContainer.GetConnectionString();
         protected string RabbitMqConnectionString => _rabbitMqContainer.GetConnectionString();
-
+        protected const string TestJwtSecret = "super_secret_key_ecdd135a-176e-4f56-b2df-55de22256dcf";
         protected BaseIntegrationTests()
         {
             _dbContainer = new PostgreSqlBuilder()
@@ -42,11 +47,14 @@ namespace Catalog.Tests.Integration.Tools
             _rabbitMqConnection = RabbitMqConfig.Connect(RabbitMqConnectionString);
             var jwt = new JwtConfiguration()
             {
-                SecretKey = "super_secret_key_ecdd135a-176e-4f56-b2df-55de22256dcf",
+                SecretKey = TestJwtSecret,
                 Audience = "EcommerceUsers",
                 Issuer = "Ecommerce"
             };
+            _tokenGenerator = new JwtTokenGenerator(jwt);
+
             _factory = new CustomWebApplicationFactory<Program>(DatabaseConnectionString, RabbitMqConnectionString, jwt);
+            
             _httpClient = _factory.CreateClient(
                 new WebApplicationFactoryClientOptions
                 {
@@ -73,6 +81,13 @@ namespace Catalog.Tests.Integration.Tools
                 _dbContainer.DisposeAsync().AsTask(),
                 _rabbitMqContainer.DisposeAsync().AsTask()
             );
+        }
+        protected string AuthenticateClient(string userId, string email, string role = "User")
+        {
+            var token = _tokenGenerator.GenerateToken(userId, email, role);
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            return token;
         }
     }
 }

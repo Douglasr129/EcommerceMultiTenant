@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +7,18 @@ import { Component } from '@angular/core';
   styleUrl: './header.scss',
 })
 export class Header {
+  isDarkTheme = signal(false);
+isCollapsed: any;
+
   toggleTheme() {
-    document.body.classList.toggle('dark-theme');
+    // 1. Inverte o valor do signal
+    this.isDarkTheme.update((current) => !current);
+
+    // 2. Aplica a classe no body
+    if (this.isDarkTheme()) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
   }
 }

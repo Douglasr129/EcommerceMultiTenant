@@ -1,0 +1,25 @@
+:root {
+  /* Cores principais */
+  --color-primary: #4a90e2;   // Azul moderno
+  --color-secondary: #50e3c2; // Verde água
+  --color-accent: #f5a623;    // Laranja vibrante
+
+  /* Fundo e texto */
+  --color-bg: #f9f9f9;        // Fundo claro
+  --color-surface: #ffffff;   // Cartões, blocos
+  --color-text: #333333;      // Texto principal
+  --color-muted: #888888;     // Texto secundário
+
+  /* Feedback */
+  --color-success: #27ae60;   // Verde sucesso
+  --color-warning: #f39c12;   // Amarelo alerta
+  --color-error: #e74c3c;     // Vermelho erro
+  --color-info: #3498db;      // Azul informativo
+
+  /* Bordas e sombras */
+  --color-border: #e0e0e0;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+  /* Tipografia */
+  --font-family: 'Inter', sans-serif;
+}

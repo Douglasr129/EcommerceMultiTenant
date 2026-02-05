@@ -1,0 +1,35 @@
+// ==============================
+// MAIN.SCSS
+// Ponto central de estilos globais
+// ==============================
+
+// 1. Configurações globais
+@use 'abstracts/variables';
+@use 'abstracts/mixins';
+@use 'abstracts/functions';
+
+// 2.
+@use 'components/buttons';
+@use 'components/cards';
+
+// 3. Estilos base
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/global';
+
+// 4. Layout
+@use 'layout/header';
+@use 'layout/sidebar';
+@use 'layout/footer';
+@use 'layout/grid';
+
+// 5. Tema padrão (Light)
+@use 'themes/light';
+
+// 6. Tema alternativo (Dark) - só será aplicado quando body tiver classe .dark-theme
+@use 'themes/dark';
+
+*{
+  margin: 0;
+  padding: 0;
+}

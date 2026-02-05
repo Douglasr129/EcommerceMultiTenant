@@ -1,0 +1,95 @@
+// src/styles/layout/_header.scss
+
+// Mixin para facilitar o uso de flexbox
+@mixin flex-center($justify: center, $align: center, $direction: row) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+  flex-direction: $direction;
+}
+
+.ctm-navbar {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow);
+  // Usando BEM ou nesting direto
+  &__brand {
+    color: var(--color-text);
+    text-decoration: none;
+    @include flex-center(flex-start);
+    font-weight: bold;
+    margin-left: 15px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    img {
+      width: 80px;
+      height: auto;
+      display: block;
+    }
+
+    span {
+      text-transform: uppercase;
+      font-size: 1.5rem; // No lugar de x-large
+    }
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+
+  &__collapse {
+    @include flex-center(space-between, flex-end);
+    margin-right: 15px;
+    flex-wrap: wrap;
+  }
+
+  &__nav {
+    @include flex-center();
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  &__link {
+    color: var(--color-text);
+    text-decoration: none;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  &__tools {
+    @include flex-center(flex-start, center);
+    height: 80px;
+  }
+  &__username{
+    color: var(--color-primary);
+    margin-right: 20px;
+  }
+  &__tools-button {
+    @include flex-center();
+    button {
+      margin-left: 5px;
+      @include flex-center();
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 50%;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      box-shadow: 1px 1px 3px 1px color-mix(in srgb, var(--color-text) 10%, transparent);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--color-secondary);
+      }
+    }
+  }
+}

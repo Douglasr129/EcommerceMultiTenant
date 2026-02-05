@@ -1,11 +1,31 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" routerLink="/">Logo</a>
-  <div class="collapse navbar-collapse">
-    <ul class="navbar-nav me-auto">
-      <li class="nav-item"><a class="nav-link" routerLink="/">Home</a></li>
-      <li class="nav-item"><a class="nav-link" routerLink="/about">Sobre</a></li>
-      <li class="nav-item"><a class="nav-link" routerLink="/contact">Contatos</a></li>
-    </ul>
-    <button class="btn btn-outline-secondary" (click)="toggleTheme()">Tema</button>
+<nav class="ctm-navbar">
+  <div class="ctm-navbar__collapse">
+    <a class="ctm-navbar__brand" routerLink="/">
+      <img src="img/logo/logo-sem-fundo.png" alt="logo da empresa" />
+      <span>Digital-Code Soluções</span>
+    </a>
+
+    <div class="ctm-navbar__tools">
+      <strong class="ctm-navbar__username">douglas.r129@outlook.com</strong>
+      <!-- Botão de tema -->
+      <div class="ctm-navbar__tools-button">
+        <button class="btn btn-outline-secondary" (click)="toggleTheme()">
+          @if (isDarkTheme()) {
+            <i class="bi bi-sun-fill"></i>
+          } @else {
+            <i class="bi bi-moon-stars-fill"></i>
+          }
+        </button>
+        <button class="btn btn-outline-secondary">
+         <i class="bi bi-bell-fill"></i>
+        </button>
+        <button class="btn btn-outline-secondary">
+          <i class="bi bi-person-fill"></i>
+        </button>
+        <button class="btn btn-outline-secondary">
+          <i class="bi bi-gear-fill"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </nav>

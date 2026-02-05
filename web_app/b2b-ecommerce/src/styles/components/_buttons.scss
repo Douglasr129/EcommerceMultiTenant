@@ -1,0 +1,39 @@
+.btn {
+  font-family: var(--font-family);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  transition: background-color 0.3s ease;
+
+  &-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--color-accent);
+    }
+  }
+
+  &-secondary {
+    background-color: var(--color-secondary);
+    color: #fff;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  &-outline {
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+
+    &:hover {
+      background-color: var(--color-primary);
+      color: #fff;
+    }
+  }
+}

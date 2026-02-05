@@ -1,0 +1,25 @@
+body.dark-theme {
+  /* Cores principais */
+  --color-primary: #bb86fc !important;   // Roxo vibrante
+  --color-secondary: #03dac6 !important; // Verde água neon
+  --color-accent: #cf6679;    // Rosa avermelhado
+
+  /* Fundo e texto */
+  --color-bg: #121212 !important;        // Fundo escuro
+  --color-surface: #1e1e1e !important;   // Cartões, blocos
+  --color-text: #f0f0f0 !important;      // Texto principal
+  --color-muted: #aaaaaa !important;     // Texto secundário
+
+  /* Feedback */
+  --color-success: #00c853 !important;   // Verde sucesso neon
+  --color-warning: #ffab00 !important;   // Amarelo alerta vibrante
+  --color-error: #cf6679 !important;     // Vermelho erro suave
+  --color-info: #64b5f6 !important;      // Azul informativo claro
+
+  /* Bordas e sombras */
+  --color-border: #333333 !important;
+  --shadow: 0 2px 6px rgba(0,0,0,0.6) !important;
+
+  /* Tipografia */
+  --font-family: 'Inter', sans-serif !important;
+}

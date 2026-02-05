@@ -1,0 +1,29 @@
+<div class="nav-item-wrapper" [class.collapsed-mode]="isCollapsed">
+  @if (item.children && item.children.length > 0) {
+    <div ngbAccordion>
+      <div ngbAccordionItem class="bg-transparent border-0">
+        <h2 ngbAccordionHeader>
+          <button ngbAccordionButton (click)="handleItemClick()">
+            <div class="icon-container">
+              <i [class]="item.icon"></i>
+            </div>
+            <span class="title-text">{{ item.title }}</span>
+          </button>
+        </h2>
+        <div ngbAccordionCollapse>
+          <div class="ps-3"> @for (child of item.children; track child.title; let i = $index) {
+               <app-nav-item [item]="child" [isCollapsed]="isCollapsed" (onExpand)="onExpand.emit()" />
+             }
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <a [routerLink]="item.link" class="nav-link-sub" (click)="handleItemClick()">
+       <div class="icon-container">
+         <i [class]="item.icon || 'bi bi-circle-fill'" style="font-size: 0.5rem"></i>
+       </div>
+       <span class="title-text">{{ item.title }}</span>
+    </a>
+  }
+</div>

@@ -1,0 +1,52 @@
+// src/styles/layout/_sidebar.scss
+
+.sidebar {
+  width: 300px;
+  min-width: 300px; // Garante que ela não encolha menos que 300px quando aberta
+  flex: 0 0 auto;    // Impede que o flexbox pai altere a largura definida
+
+  min-height: calc(100vh - 60px);
+  overflow-x: hidden;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              min-width 0.4s cubic-bezier(0.4, 0, 0.2, 1); // Adicione transição no min-width também
+
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.5rem;
+
+  &.is-collapsed {
+    width: 70px;
+    min-width: 70px; // Altera o min-width no estado colapsado
+
+    .sidebar__button {
+      justify-content: center;
+      margin-right: 0;
+    }
+  }
+
+  .sidebar__button {
+    border: none;
+    background-color: transparent;
+    color: var(--color-primary);
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar__menu {
+    flex-grow: 1;
+    // Limpeza para remover os pontos pretos da lista que aparecem na sua foto
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

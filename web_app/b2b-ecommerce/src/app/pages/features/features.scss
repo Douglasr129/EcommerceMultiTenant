@@ -1,0 +1,67 @@
+.features-page {
+  background-color: var(--color-surface); // Fundo levemente diferente para contraste
+  padding-bottom: 35px;
+  .feature-item {
+    background: var(--color-bg);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+    height: 100%;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: var(--shadow);
+      border-color: var(--color-primary);
+
+      .feature-icon {
+        transform: rotate(10deg);
+      }
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    p {
+      color: var(--color-muted);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Adaptação Dark Theme
+.dark-theme .features-page {
+  background-color: #121212;
+
+  .feature-item {
+    background: #1e1e1e;
+    border-color: #333;
+
+    h4 { color: #fff; }
+    p { color: #aaa; }
+  }
+}
+.color-text{
+  color: var(--color-text);
+}

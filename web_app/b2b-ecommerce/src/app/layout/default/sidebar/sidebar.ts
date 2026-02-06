@@ -14,7 +14,7 @@ import { NavItem } from "./menu/nav-item/nav-item";
   styleUrl: './sidebar.scss',
 })
 export class Sidebar implements OnInit {
-  role: string = 'Admin';
+  role: string = 'Guest';
   itensMenu: IMenu[] | any;
   toggleSidebar = signal(false);
 
@@ -22,8 +22,6 @@ export class Sidebar implements OnInit {
 
   ngOnInit(): void {
     this.role = this.authService.getRole();
-    this.role = 'Admin';
-
     switch (this.role) {
       case 'Admin':
         this.itensMenu = ADMIN_DATA;

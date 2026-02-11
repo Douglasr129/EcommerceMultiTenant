@@ -1,0 +1,192 @@
+// auth.component.scss
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+
+  .auth-wrapper {
+    background-color: var(--color-surface);
+    width: 900px;
+    height: 60vh;
+    min-height: 500px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+
+    // Animação do slide
+    &.show-register .slider-container {
+      transform: translateX(-50%);
+    }
+
+    .slider-container {
+      display: flex;
+      width: 200%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+      .slide {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+
+        // Slide de Login
+        &.login-slide {
+          justify-content: space-between;
+
+          app-login {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .slide-action {
+            border-radius: 150px 0 0 80%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          }
+        }
+
+        // Slide de Registro
+        &.register-slide {
+          justify-content: flex-start;
+
+          .slide-action {
+            border-radius: 0 100% 150px 0;
+            background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
+          }
+
+          app-register {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+
+        // Painel lateral colorido
+        .slide-action {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 40%;
+          min-width: 300px;
+          color: white;
+          padding: 40px;
+          box-sizing: border-box;
+          transition: all 0.6s ease;
+
+          h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 700;
+          }
+
+          p {
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 30px;
+          }
+
+          .switch-text {
+            font-size: 14px;
+
+            a {
+              color: white;
+              cursor: pointer;
+              text-decoration: none;
+              font-weight: bold;
+              border: 2px solid white;
+              padding: 10px 30px;
+              border-radius: 25px;
+              display: inline-block;
+              margin-top: 10px;
+              transition: all 0.3s ease;
+
+              &:hover {
+                background-color: white;
+                color: #667eea;
+                transform: scale(1.05);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsivo
+@media (max-width: 768px) {
+  .auth-container {
+    .auth-wrapper {
+      width: 95%;
+      height: 90vh; // Ajuste para ocupar a tela
+      min-height: 700px;
+      overflow: hidden;
+
+      // Altera a animação para VERTICAL (Y) em vez de Horizontal (X)
+           &.show-register .slider-container {
+        transform: translateY(-50%); // Desliza para o segundo slide (Registro)
+      }
+      .slider-container {
+        flex-direction: column;
+        width: 100%;
+        height: 200%;
+
+        .slide {
+          width: 100%;
+          height: 50%;
+          display: flex;
+          flex-direction: column;
+
+          // CONFIGURAÇÃO ESPECÍFICA DO LOGIN
+          &.login-slide {
+            .slide-action {
+              order: 2; // Painel colorido EM CIMA
+              border-radius: 50% 50% 0 0 !important;
+            }
+            app-login {
+              order: 1; // Formulário EMBAIXO
+            }
+          }
+
+          // CONFIGURAÇÃO ESPECÍFICA DO REGISTRO
+          &.register-slide {
+            .slide-action {
+              order: 1; // Painel colorido EMBAIXO
+              border-radius: 0 0 50% 50% !important; // Inverte arredondamento
+            }
+            app-register {
+              order: 2; // Formulário EM CIMA
+            }
+          }
+
+          // Estilos comuns para ambos os painéis no mobile
+          .slide-action {
+            width: 100%;
+            height: 35%; // Ajuste de altura do painel
+            min-width: unset;
+            padding: 20px;
+          }
+
+          app-login, app-register {
+            width: 100%;
+            flex: 1;
+            padding: 20px;
+          }
+        }
+      }
+    }
+  }
+}

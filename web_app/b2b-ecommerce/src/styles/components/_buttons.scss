@@ -9,11 +9,11 @@
   transition: background-color 0.3s ease;
 
   &-primary {
-    background-color: var(--color-primary);
+    background-color: var(--color-primary) !important;
     color: #fff;
 
     &:hover {
-      background-color: var(--color-accent);
+      background-color: var(--color-accent) !important;
     }
   }
 

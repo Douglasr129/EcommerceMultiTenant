@@ -1,4 +1,3 @@
-// src/app/domain/public/public.routes.ts
 import { Routes } from '@angular/router';
 
 

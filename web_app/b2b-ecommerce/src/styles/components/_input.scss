@@ -1,0 +1,93 @@
+.input-container {
+  width: 100%;
+  max-width: 20em;
+  height: 3.5em;
+  position: relative;
+  margin-top: 1em;
+
+  .input {
+    position: absolute;
+    bottom: 0;
+    height: 80%;
+    width: 100%;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-muted);
+    box-shadow: var(--shadow);
+    border-radius: 0.5em;
+    outline: none;
+    color: var(--color-text);
+    padding: 1em;
+    transition: all 0.2s ease;
+    z-index: 1;
+
+    &::placeholder {
+      color: transparent;
+      transition: color 0.2s ease;
+    }
+
+    // Classe especial para quando houver um botão no canto direito
+    &.has-action {
+      padding-right: 3em; // Abre espaço para o ícone não cobrir o texto
+    }
+
+    &:hover { border: 1px solid var(--color-accent); }
+
+    &:focus,
+    &:not(:placeholder-shown) {
+      border: 1px solid var(--color-info);
+      padding: 0.8em 1em;
+
+      &.has-action { padding-right: 3em; } // Mantém o recuo no foco
+
+      &::placeholder { color: var(--color-muted); }
+    }
+  }
+
+  // Estilo Global para o Botão dentro do Input
+  .input-action-btn {
+    position: absolute;
+    right: -4em;
+    bottom: 0.4em; // Centraliza verticalmente na área do input (80% da altura)
+    height: 2.2em;
+    width: 2.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    cursor: pointer;
+    z-index: 3; // Acima da label e do input
+    transition: color 0.2s;
+    border-radius: 50%;
+
+    &:hover {
+      color: var(--color-primary);
+      background-color: rgba(var(--color-primary-rgb), 0.1);
+    }
+
+    i { font-size: 1.2rem; }
+  }
+
+  label {
+    position: absolute;
+    top: 60%;
+    left: 1em;
+    transform: translateY(-50%);
+    color: var(--color-muted);
+    pointer-events: none;
+    font-size: 1em;
+    z-index: 2; // Acima do input, abaixo do botão de ação
+    transition: all 0.2s ease;
+    background-color: var(--color-surface);
+    padding: 0 0.4em;
+  }
+
+  .input:focus + label,
+  .input:not(:placeholder-shown) + label {
+    top: 20%;
+    font-size: 0.75em;
+    color: var(--color-info);
+    left: 0.8em;
+  }
+}

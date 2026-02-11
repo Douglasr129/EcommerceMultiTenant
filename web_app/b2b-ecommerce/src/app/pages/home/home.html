@@ -36,23 +36,10 @@
             [class.bi-moon-stars-fill]="!isDarkTheme"
           ></i>
         </button>
-        <div ngbDropdown>
-          <button type="button" class="btn action-btn" ngbDropdownToggle>
-            Entrar
+        <div>
+          <button type="button" class="btn action-btn" routerLink="./auth/login">
+            Acessar
           </button>
-          <div ngbDropdownMenu>
-            <button ngbDropdownItem>Sou Cliente</button>
-            <button ngbDropdownItem>Sou Vendedor</button>
-          </div>
-        </div>
-        <div ngbDropdown>
-          <button type="button" class="btn action-btn" ngbDropdownToggle>
-            Cadastrar
-          </button>
-          <div ngbDropdownMenu>
-            <button ngbDropdownItem>Sou Cliente</button>
-            <button ngbDropdownItem>Sou Vendedor</button>
-          </div>
         </div>
       </div>
     </div>

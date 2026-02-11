@@ -3,13 +3,7 @@ import { Component } from '@angular/core';
 import { About } from '../about/about';
 import { Contact } from '../contact/contact';
 import { Features } from '../features/features';
-import {
-  NgbDropdown,
-  NgbDropdownButtonItem,
-  NgbDropdownItem,
-  NgbDropdownMenu,
-  NgbDropdownToggle,
-} from '@ng-bootstrap/ng-bootstrap';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -17,12 +11,8 @@ import {
     About,
     Contact,
     Features,
-    NgbDropdown,
-    NgbDropdownToggle,
-    NgbDropdownMenu,
-    NgbDropdownItem,
-    NgbDropdownButtonItem,
-  ],
+    RouterLink
+],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

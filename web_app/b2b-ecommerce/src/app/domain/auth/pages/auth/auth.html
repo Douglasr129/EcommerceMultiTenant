@@ -1,0 +1,32 @@
+<!-- auth.component.html -->
+<div class="auth-container">
+  <div class="auth-wrapper" [class.show-register]="showRegister">
+    <div class="slider-container">
+
+      <!-- Slide de Login -->
+      <div class="slide login-slide">
+        <app-login></app-login>
+        <div class="slide-action">
+          <h2>Bem-vindo!</h2>
+          <p>Não tem uma conta? Cadastre-se agora e aproveite nossos serviços</p>
+          <div class="switch-text">
+            <a (click)="toggleSlide()">Cadastrar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide de Registro -->
+      <div class="slide register-slide">
+        <div class="slide-action">
+          <h2>Olá, Amigo!</h2>
+          <p>Já tem uma conta? Faça login e continue sua jornada conosco</p>
+          <div class="switch-text">
+            <a (click)="toggleSlide()">Entrar</a>
+          </div>
+        </div>
+        <app-register></app-register>
+      </div>
+
+    </div>
+  </div>
+</div>

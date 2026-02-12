@@ -11,7 +11,7 @@ namespace Identity.Tests.Unit
         [Fact]
         public void Should_GenerateToken_WithRoleClaim()
         {
-            var user = new User("test@email.com", "hash", "Admin");
+            var user = new User("teste de nome", "test@email.com", "hash", "Admin");
             var tokenService = new TokenService("2f844838-6b5e-4656-9086-cca7fa971ef2");
 
             var token = tokenService.GenerateToken(user);

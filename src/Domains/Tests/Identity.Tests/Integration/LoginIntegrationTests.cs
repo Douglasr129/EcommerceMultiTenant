@@ -45,7 +45,7 @@ namespace Identity.Tests.Integration
             var tokenService = new TokenService("2f844838-6b5e-4656-9086-cca7fa971ef2");
 
             // Criar usuário manualmente
-            var user = new User("integration@test.com", hasher.Hash("123456"), "Customer");
+            var user = new User("teste de nome", "integration@test.com", hasher.Hash("123456"), "Customer");
             await repo.AddAsync(user);
 
             var handler = new LoginUserHandler(repo, hasher, tokenService);

@@ -19,7 +19,7 @@ namespace Identity.Tests.Integration
             var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             var hasher = new PasswordHasher();
 
-            var user = new User("admin@test.com", hasher.Hash("123456"), "Admin");
+            var user = new User("teste de nome","admin@test.com", hasher.Hash("123456"), "Admin");
             context.Users.Add(user);
             await context.SaveChangesAsync();
 

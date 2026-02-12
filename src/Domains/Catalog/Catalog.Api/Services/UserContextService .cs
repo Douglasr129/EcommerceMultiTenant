@@ -8,15 +8,11 @@ namespace Catalog.Api.Services
         string GetUserEmail();
         string GetUserRole();
     }
-    public class UserContextService : IUserContextService
+    public class UserContextService(IHttpContextAccessor httpContextAccessor) : IUserContextService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-        public UserContextService(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
+#pragma warning disable CS8603 // Possível retorno de referência nula.
         public string GetUserId()
         {
             return _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -31,5 +27,6 @@ namespace Catalog.Api.Services
         {
             return _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Role)?.Value;
         }
+#pragma warning restore CS8603 // Possível retorno de referência nula.
     }
 }

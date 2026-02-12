@@ -3,9 +3,9 @@
     image: postgres:latest
     container_name: ecommerce_postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: ecommerce_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=ecommerce_db
     ports:
       - "5432:5432"
     volumes:
@@ -18,12 +18,14 @@
     container_name: pgadmin-emagos
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
     ports:
       - "5050:80"
     networks:
       - b2b-network
+    depends_on:
+      - postgres
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -32,53 +34,52 @@
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin123
-      RABBITMQ_DEFAULT_VHOST: /
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+      - RABBITMQ_DEFAULT_VHOST=/
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - b2b-network
 
-  # DOMÍNIO IDENTITY
   identity-api:
     build:
-      context: ./src/Services/Identity
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/Domains/Identity/Identity.Api/Dockerfile
     container_name: identity-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # O Host deve ser 'postgres' (nome do serviço acima)
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=identity_db;Username=admin;Password=admin123
+      - ConnectionStrings__DefaultConnection=Host=ecommerce_postgres;Database=ecommerce_db;Username=admin;Password=admin123
+    ports:
+      - "5001:8080"
     depends_on:
       - postgres
     networks:
       - b2b-network
 
-  # DOMÍNIO CATALOG
   catalog-api:
     build:
-      context: ./src/Services/Catalog
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/Domains/Catalog/Catalog.Api/Dockerfile
     container_name: catalog-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=catalog_db;Username=admin;Password=admin123
-      # Configuração para o Catalog conseguir falar com o RabbitMQ
+      - ConnectionStrings__DefaultConnection=Host=ecommerce_postgres;Database=ecommerce_db;Username=admin;Password=admin123
       - RabbitMqSettings__HostName=rabbitmq
       - RabbitMqSettings__UserName=admin
       - RabbitMqSettings__Password=admin123
+    ports:
+      - "5002:8080"
     depends_on:
       - postgres
       - rabbitmq
     networks:
       - b2b-network
 
-  # API GATEWAY (Ocelot)
   api-gateway:
     build:
-      context: ./src/ApiGateways/Ocelot
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/ApiGateway/Dockerfile # Verifique se o arquivo está aqui
     container_name: b2b-gateway
     ports:
       - "8000:8080"

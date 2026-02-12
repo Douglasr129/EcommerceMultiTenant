@@ -1,32 +1,36 @@
-# Acesse https://aka.ms/customizecontainer para saber como personalizar seu contêiner de depuração e como o Visual Studio usa este Dockerfile para criar suas imagens para uma depuração mais rápida.
-
-# Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
+# Fase base (Runtime)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
-
-# Esta fase é usada para compilar o projeto de serviço
+# Fase de Compilação (SDK)
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Identity.Api/Identity.Api.csproj", "Identity.Api/"]
-COPY ["Identity.Application/Identity.Application.csproj", "Identity.Application/"]
-COPY ["Identity.Infrastructure/Identity.Infrastructure.csproj", "Identity.Infrastructure/"]
-COPY ["Identity.Domain/Identity.Domain.csproj", "Identity.Domain/"]
-RUN dotnet restore "./Identity.Api/Identity.Api.csproj"
-COPY . .
-WORKDIR "/src/Identity.Api"
-RUN dotnet build "./Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
+# CORREÇÃO DOS CAMINHOS: Ajustado para refletir src/Domains/Identity/
+COPY ["src/Domains/Identity/Identity.Api/Identity.Api.csproj", "src/Domains/Identity/Identity.Api/"]
+COPY ["src/Domains/Identity/Identity.Application/Identity.Application.csproj", "src/Domains/Identity/Identity.Application/"]
+COPY ["src/Domains/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj", "src/Domains/Identity/Identity.Infrastructure/"]
+COPY ["src/Domains/Identity/Identity.Domain/Identity.Domain.csproj", "src/Domains/Identity/Identity.Domain/"]
+
+# Restaura as dependências usando o caminho correto
+RUN dotnet restore "src/Domains/Identity/Identity.Api/Identity.Api.csproj"
+
+# Copia todo o código da raiz (EcommerceMultiTenant) para o container
+COPY . .
+
+# Move para a pasta do projeto da API dentro da estrutura de pastas do container
+WORKDIR "/src/src/Domains/Identity/Identity.Api"
+RUN dotnet build "Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Fase de Publicação
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
+# Fase Final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

@@ -13,7 +13,7 @@ namespace Identity.Tests.Unit
         public async Task Should_ReturnToken_When_CredentialsAreValid()
         {
             // Arrange
-            var user = new User("test@email.com", "hashedPassword", "Customer");
+            var user = new User("teste de nome", "test@email.com", "hashedPassword", "Customer");
 
             var repoMock = new Mock<IUserRepository>();
             repoMock.Setup(r => r.GetByEmailAsync(user.Email)).ReturnsAsync(user);

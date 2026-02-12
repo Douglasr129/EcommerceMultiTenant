@@ -10,13 +10,13 @@ namespace Identity.Tests.Unit
         [Fact]
         public void Should_ThrowException_When_PriceIsNegtative()
         {
-            Assert.Throws<ArgumentNullException>(() => new User("", "hash", "Customer"));
-            Assert.Throws<ArgumentNullException>(() => new User("Email@e.com", "", "Customer"));
+            Assert.Throws<ArgumentNullException>(() => new User("teste de nome", "", "hash", "Customer"));
+            Assert.Throws<ArgumentNullException>(() => new User("teste de nome", "Email@e.com", "", "Customer"));
         }
         [Fact]
         public void Should_CreateUser_When_ValidData()
         {
-            var user = new User("test@email.com", "hash", "");
+            var user = new User("teste de nome", "test@email.com", "hash", "");
             Assert.NotNull(user);
             Assert.Equal("Customer", user.Role);
         }

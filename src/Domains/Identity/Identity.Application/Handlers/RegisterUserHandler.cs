@@ -26,7 +26,7 @@ namespace Identity.Application.Handlers
                 throw new ArgumentException("Senha é obrigatória");
             }
             var hash = _hasher.Hash(command.Password!);
-            var user = new User(command.Email!, hash, command.Role ?? "Custumer");
+            var user = new User(command.Name, command.Email!, hash, command.Role ?? "Custumer");
             await _repository.AddAsync(user);
 
             // Publica evento no RabbitMQ

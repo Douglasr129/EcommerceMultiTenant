@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  importProvidersFrom,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -10,6 +11,8 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +26,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideClientHydration(withEventReplay()),
+    provideHttpClient(),
+    importProvidersFrom(NgbModule),
   ],
 };

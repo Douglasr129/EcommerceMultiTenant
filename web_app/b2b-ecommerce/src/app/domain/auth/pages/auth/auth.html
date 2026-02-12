@@ -1,14 +1,20 @@
 <!-- auth.component.html -->
 <div class="auth-container">
+  <div class="return">
+    <button class="return-btn" routerLink="/">
+      Voltar para pagina inicial
+    </button>
+  </div>
   <div class="auth-wrapper" [class.show-register]="showRegister">
     <div class="slider-container">
-
       <!-- Slide de Login -->
       <div class="slide login-slide">
         <app-login></app-login>
         <div class="slide-action">
           <h2>Bem-vindo!</h2>
-          <p>Não tem uma conta? Cadastre-se agora e aproveite nossos serviços</p>
+          <p>
+            Não tem uma conta? Cadastre-se agora e aproveite nossos serviços
+          </p>
           <div class="switch-text">
             <a (click)="toggleSlide()">Cadastrar</a>
           </div>
@@ -26,7 +32,6 @@
         </div>
         <app-register></app-register>
       </div>
-
     </div>
   </div>
 </div>

@@ -6,11 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
 	  <InternalsVisibleTo>Identity.Tests</InternalsVisibleTo>
+
+	  <UserSecretsId>3c220a2e-e8f4-4658-b708-2b22a3f91194</UserSecretsId>
+
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Evolve" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.12.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />

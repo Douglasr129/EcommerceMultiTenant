@@ -27,6 +27,11 @@ namespace Identity.Infrastructure.Configurations
                     .IsRequired()
                     .HasMaxLength(255);
 
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
                 entity.Property(e => e.PasswordHash)
                     .HasColumnName("passwordhash")
                     .IsRequired();
@@ -36,10 +41,15 @@ namespace Identity.Infrastructure.Configurations
                     .IsRequired()
                     .HasMaxLength(255);
 
+                entity.Property(e => e.Active)
+                    .HasColumnName("active")
+                    .IsRequired();
+
                 // Adicione outras propriedades conforme necessário
                 // entity.Property(e => e.CreatedAt)
                 //     .HasColumnName("created_at");
             });
+            modelBuilder.Entity<User>().HasQueryFilter(u => u.Active);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { IMenu } from './menu/Interfaces/menu-interface';
 import { ADMIN_DATA } from './menu/data/admin-data-menu';
@@ -17,8 +17,7 @@ export class Sidebar implements OnInit {
   role: string = 'Guest';
   itensMenu: IMenu[] | any;
   toggleSidebar = signal(false);
-
-  constructor(private authService: AuthService) {}
+  authService = inject(AuthService)
 
   ngOnInit(): void {
     this.role = this.authService.getRole();

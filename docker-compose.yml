@@ -10,6 +10,9 @@
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    networks:
+      - b2b-network
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin-emagos
@@ -19,18 +22,76 @@
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
       - "5050:80"
+    networks:
+      - b2b-network
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ecommerce_rabbitmq
     ports:
-      - "5672:5672"   # Porta para comunicação
-      - "15672:15672" # Porta para painel de administração
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin123
       RABBITMQ_DEFAULT_VHOST: /
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - b2b-network
+
+  # DOMÍNIO IDENTITY
+  identity-api:
+    build:
+      context: ./src/Services/Identity
+      dockerfile: Dockerfile
+    container_name: identity-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # O Host deve ser 'postgres' (nome do serviço acima)
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=identity_db;Username=admin;Password=admin123
+    depends_on:
+      - postgres
+    networks:
+      - b2b-network
+
+  # DOMÍNIO CATALOG
+  catalog-api:
+    build:
+      context: ./src/Services/Catalog
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=catalog_db;Username=admin;Password=admin123
+      # Configuração para o Catalog conseguir falar com o RabbitMQ
+      - RabbitMqSettings__HostName=rabbitmq
+      - RabbitMqSettings__UserName=admin
+      - RabbitMqSettings__Password=admin123
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - b2b-network
+
+  # API GATEWAY (Ocelot)
+  api-gateway:
+    build:
+      context: ./src/ApiGateways/Ocelot
+      dockerfile: Dockerfile
+    container_name: b2b-gateway
+    ports:
+      - "8000:8080"
+    depends_on:
+      - identity-api
+      - catalog-api
+    networks:
+      - b2b-network
+
 volumes:
   postgres_data:
   rabbitmq_data:
+
+networks:
+  b2b-network:
+    driver: bridge

@@ -7,6 +7,7 @@
   </Folder>
   <Folder Name="/src/">
     <File Path="docker-compose.yml" />
+    <Project Path="src/ApiGateway/ApiGateway.csproj" Id="3946d80d-8641-48bf-b683-6e4850c520b6" />
   </Folder>
   <Folder Name="/src/Domains/" />
   <Folder Name="/src/Domains/Catalog/">

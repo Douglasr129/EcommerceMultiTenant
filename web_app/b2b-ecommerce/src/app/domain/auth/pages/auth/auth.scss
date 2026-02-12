@@ -1,11 +1,20 @@
 // auth.component.scss
 .auth-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: var(--color-bg);
-
+  .return {
+    width: 900px;
+    padding: 1rem;
+    .return-btn {
+      border: none;
+      background-color: var(--color-bg);
+      color: var(--color-primary);
+    }
+  }
   .auth-wrapper {
     background-color: var(--color-surface);
     width: 900px;
@@ -129,6 +138,9 @@
 // Responsivo
 @media (max-width: 768px) {
   .auth-container {
+    .return {
+      width: 95%;
+    }
     .auth-wrapper {
       width: 95%;
       height: 90vh; // Ajuste para ocupar a tela
@@ -136,7 +148,7 @@
       overflow: hidden;
 
       // Altera a animação para VERTICAL (Y) em vez de Horizontal (X)
-           &.show-register .slider-container {
+      &.show-register .slider-container {
         transform: translateY(-50%); // Desliza para o segundo slide (Registro)
       }
       .slider-container {
@@ -180,7 +192,8 @@
             padding: 20px;
           }
 
-          app-login, app-register {
+          app-login,
+          app-register {
             width: 100%;
             flex: 1;
             padding: 20px;

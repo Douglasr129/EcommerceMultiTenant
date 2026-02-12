@@ -1,16 +1,41 @@
 <!-- register.component.html -->
 <div class="form-container">
-  <h2>Cadastrar</h2>
-  <form>
+  <h2 class="mb-2">Cadastrar</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="role-selector-container">
+      <label class="role-title">
+        Perfil selecionado:
+        <span class="role-badge" [class.vendedor]="userRole === 'vendedor'">
+          {{ userRole | uppercase }}
+        </span>
+      </label>
+      <div class="fader-track" (click)="toggleRole()">
+        <div class="role-labels">
+          <span [class.active]="userRole === 'cliente'">Cliente</span>
+          <span [class.active]="userRole === 'vendedor'">Vendedor</span>
+        </div>
+        <div class="fader-thumb" [class.is-vendedor]="userRole === 'vendedor'">
+          <i
+            class="bi"
+            [class.bi-person]="userRole === 'cliente'"
+            [class.bi-briefcase]="userRole === 'vendedor'"
+          ></i>
+        </div>
+      </div>
+    </div>
     <div class="input-container">
       <input
         type="text"
         id="name"
         class="input"
-        placeholder="exemplo@empresa.com"
+        placeholder="John Doe"
         formControlName="name"
+        [class.error]="isFieldInvalid('name')"
       />
       <label for="name">Nome</label>
+      @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
+        <small class="error-message">O nome é obrigatório (mín. 3 caracteres)</small>
+      }
     </div>
 
     <div class="input-container">
@@ -20,8 +45,12 @@
         class="input"
         placeholder="exemplo@empresa.com"
         formControlName="email"
+        [class.error]="isFieldInvalid('email')"
       />
       <label for="email">E-mail</label>
+      @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+        <small class="error-message">Insira um e-mail válido</small>
+      }
     </div>
     <div class="input-container">
       <input
@@ -30,6 +59,7 @@
         class="input"
         placeholder="********"
         formControlName="password"
+        [class.error]="isFieldInvalid('password')"
       />
       <label for="password">Senha</label>
       <button
@@ -43,16 +73,20 @@
           [class.bi-eye-slash]="showPassword"
         ></i>
       </button>
+      @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+        <small class="error-message">Mínimo de 8 caracteres</small>
+      }
     </div>
     <div class="input-container">
       <input
         [type]="showPasswordConfim ? 'text' : 'password'"
-        id="password"
+        id="confirmPassword"
         class="input"
         placeholder="********"
-        formControlName="password"
+        formControlName="confirmPassword"
+        [class.error]="isFieldInvalid('confirmPassword')"
       />
-      <label for="password">Confirme a senha</label>
+      <label for="confirmPassword">Confirme a senha</label>
       <button
         type="button"
         class="input-action-btn"
@@ -64,7 +98,17 @@
           [class.bi-eye-slash]="showPasswordConfim"
         ></i>
       </button>
+      @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
+        <small class="error-message">As senhas não coincidem</small>
+      }
     </div>
-    <button type="submit" class="btn btn-primary">Cadastrar</button>
+    <div class="form-actions mt-4">
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-3 fw-bold"
+        [disabled]="registerForm.invalid">
+        Finalizar Cadastro
+      </button>
+    </div>
   </form>
 </div>

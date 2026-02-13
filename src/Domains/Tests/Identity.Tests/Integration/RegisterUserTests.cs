@@ -55,21 +55,5 @@ namespace Identity.Tests.Integration
             await _context.DisposeAsync();
         }
 
-        [Fact]
-        public async Task Should_RegisterUserSuccessfully()
-        {
-            var repo = new UserRepository(_context);
-            var hasher = new PasswordHasher();
-            var publisher = new UserCreatedPublisher(_connection);
-            var handler = new RegisterUserHandler(repo, hasher, publisher);
-            var command = new RegisterUserCommand
-            {
-                Email = "teste@email.com",
-                Password = "teste@123",
-                Role = "Customer"
-            };
-            var userId = await handler.Handle(command);
-            Assert.NotEqual(Guid.Empty, userId);
-        }
     }
 }

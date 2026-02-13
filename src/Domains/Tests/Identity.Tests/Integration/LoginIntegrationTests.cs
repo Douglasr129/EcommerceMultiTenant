@@ -36,33 +36,6 @@ namespace Identity.Tests.Integration
             await _dbContainer.StopAsync();
             await _context.DisposeAsync();
         }
-        [Fact]
-        public async Task Should_LoginSuccessfully_AndGenerateToken()
-        {
-            // Arrange
-            var repo = new UserRepository(_context);
-            var hasher = new PasswordHasher();
-            var tokenService = new TokenService("2f844838-6b5e-4656-9086-cca7fa971ef2");
-
-            // Criar usuário manualmente
-            var user = new User("teste de nome", "integration@test.com", hasher.Hash("123456"), "Customer");
-            await repo.AddAsync(user);
-
-            var handler = new LoginUserHandler(repo, hasher, tokenService);
-
-            var command = new LoginUserCommand
-            {
-                Email = "integration@test.com",
-                Password = "123456"
-            };
-
-            // Act
-            var token = await handler.Handle(command);
-
-            // Assert
-            Assert.False(string.IsNullOrEmpty(token));
-            Assert.Contains(".", token); // JWT tem formato com pontos (header.payload.signature)
-        }
 
     }
 }

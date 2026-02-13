@@ -1,9 +1,11 @@
 ﻿using EvolveDb;
+using Identity.Api.Middlewares;
 using Identity.Application.Handlers;
 using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Configurations;
 using Identity.Infrastructure.Messaging;
 using Identity.Infrastructure.Repisitories;
+using Identity.Infrastructure.Repositories;
 using Identity.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -77,11 +79,19 @@ builder.Services.AddSingleton<IConnection>(sp =>
 
 
 // PASSO 5: Registrar serviços da aplicação
+// Unit of Work e Repositórios
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<UserCreatedPublisher>();
-builder.Services.AddScoped<RegisterUserHandler>();
+// Handlers
+builder.Services.AddScoped<DeleteUserHandler>();
+builder.Services.AddScoped<GetUserHandler>();
 builder.Services.AddScoped<LoginUserHandler>();
+builder.Services.AddScoped<RegisterUserHandler>();
+builder.Services.AddScoped<UpdateRoleHandler>();
+builder.Services.AddScoped<UpdateUserHandler>();
 builder.Services.AddScoped<ITokenService>(provider =>
     new TokenService(jwtSecretKey));
 
@@ -114,6 +124,8 @@ builder.Services.AddAuthorizationBuilder()
 
 // PASSO 8: Construir a aplicação
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

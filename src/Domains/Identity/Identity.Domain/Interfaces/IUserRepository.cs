@@ -10,7 +10,7 @@ namespace Identity.Domain.Interfaces
         Task<User?> GetByUsernameAsync(string username);
         Task<Collection<User>> GetAllUserAsync();
         Task<Collection<User>> GetAllUserByRolesAsync(string role);
-        Task<User?> UpdateUserAsync(User user);
+        Task UpdateUserAsync(User user);
         Task DeleteUserAsync(User user);
 
     }

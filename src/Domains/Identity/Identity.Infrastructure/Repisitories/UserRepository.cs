@@ -3,9 +3,8 @@ using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
-using Identity.Domain.Exceptions;
 
-namespace Identity.Infrastructure.Repisitories
+namespace Identity.Infrastructure.Repositories
 {
     public class UserRepository(IdentityDbContext context) : IUserRepository
     {
@@ -14,20 +13,20 @@ namespace Identity.Infrastructure.Repisitories
         public async Task AddAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<Collection<User>> GetAllUserAsync()
         {
-            var usersList = await _context.Users
-                .Where(u => u.Active)
-                .ToListAsync();
+            // O filtro Active agora é automático pelo DbContext
+            var usersList = await _context.Users.ToListAsync();
             return new Collection<User>(usersList);
         }
+
         public async Task<Collection<User>> GetAllUserByRolesAsync(string role)
         {
+            // O filtro Active agora é automático
             var users = await _context.Users
-                .Where(u => u.Active && u.Role == role)
+                .Where(u => u.Role == role)
                 .ToListAsync();
 
             return new Collection<User>(users);
@@ -35,36 +34,31 @@ namespace Identity.Infrastructure.Repisitories
 
         public async Task<User?> GetByEmailAsync(string email)
         {
+            // O filtro Active agora é automático
             return await _context.Users
-                     .FirstOrDefaultAsync(u => u.Email == email && u.Active);
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
+            // O filtro Active agora é automático
             return await _context.Users
-                     .FirstOrDefaultAsync(u => u.Name == username && u.Active);
+                .FirstOrDefaultAsync(u => u.Name == username);
         }
 
-        public async Task<User?> UpdateUserAsync(User user)
+        public async Task UpdateUserAsync(User user)
         {
-            var existingUser = await _context.Users
-             .FirstOrDefaultAsync(u => u.Id == user.Id && u.Active);
-            if (existingUser == null || !existingUser.Active) throw new DomainException("Usuário não encontrado");
-
-
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-            return user;
+            await Task.CompletedTask;
         }
+
         public async Task DeleteUserAsync(User user)
         {
-            var existingUser = await _context.Users
-                         .FirstOrDefaultAsync(u => u.Id == user.Id && u.Active);
-            if (existingUser == null || !existingUser.Active) throw new DomainException("Usuário não encontrado");
-            
-            existingUser.ChangeSituation();
-            _context.Users.Update(existingUser!);
-            await _context.SaveChangesAsync();
+            // Chama o método de domínio que seta Active = false
+            user.ChangeSituation();
+
+            _context.Users.Update(user);
+            await Task.CompletedTask;
         }
     }
 }

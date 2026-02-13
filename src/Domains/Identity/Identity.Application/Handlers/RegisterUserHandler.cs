@@ -1,38 +1,65 @@
 ﻿using Identity.Application.Commands;
+using Identity.Application.Queries;
 using Identity.Domain.Entities;
+using Identity.Domain.Exceptions;
 using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Messaging;
+using Identity.Infrastructure.Security;
 
 namespace Identity.Application.Handlers
 {
-    public class RegisterUserHandler(IUserRepository repository, IPasswordHasher hasher, UserCreatedPublisher publisher)
+    public class RegisterUserHandler(IUnitOfWork uow, IPasswordHasher hasher, UserCreatedPublisher publisher, ITokenService tokenService)
     {
-        private readonly IUserRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
         private readonly IPasswordHasher _hasher = hasher;
+        private readonly ITokenService _tokenService = tokenService;
         private readonly UserCreatedPublisher _publisher = publisher;
 
-        public async Task<Guid> Handle(RegisterUserCommand command)
+        public async Task<RegisterUserQuery> Handle(RegisterUserCommand command)
         {
-            if(string.IsNullOrWhiteSpace(command.Email))
-            {
-                var existingUser = await _repository.GetByEmailAsync(command.Email!);
-                if (existingUser != null)
-                {
-                    throw new InvalidOperationException("Usuário já cadastrado.");
-                }
-            }
-            if (string.IsNullOrWhiteSpace(command.Password))
-            {
-                throw new ArgumentException("Senha é obrigatória");
-            }
-            var hash = _hasher.Hash(command.Password!);
-            var user = new User(command.Name, command.Email!, hash, command.Role ?? "Custumer");
-            await _repository.AddAsync(user);
+            // 1. Validações básicas
+            if (string.IsNullOrWhiteSpace(command.Email))
+                throw new ArgumentNullException(nameof(command.Email), "O e-mail é obrigatório.");
 
-            // Publica evento no RabbitMQ
+            if (string.IsNullOrWhiteSpace(command.Password))
+                throw new ArgumentNullException(nameof(command.Password), "A senha é obrigatória.");
+
+            // 2. Verificação de Duplicidade (Usando a UoW)
+            var existingUser = await _uow.Users.GetByEmailAsync(command.Email);
+            if (existingUser != null)
+            {
+                // Lembra do ConflictException (409) que criamos? Ele brilha aqui.
+                throw new ConflictException("Este e-mail já está cadastrado.");
+            }
+
+            // 3. Criação da Entidade
+            var hash = _hasher.Hash(command.Password);
+
+            // Corrigi o typo de "Custumer" para "Customer"
+            var user = new User(command.Name, command.Email, hash, command.Role ?? "Customer");
+
+            // 4. Adiciona ao contexto (Ainda não salva no banco)
+            await _uow.Users.AddAsync(user);
+
+            // 5. Persistência Atômica
+            var success = await _uow.CommitAsync();
+
+            if (!success)
+                throw new InvalidOperationException("Não foi possível realizar o cadastro no momento.");
+
+            // 6. Publicação de Eventos (Ocorre APÓS o sucesso no banco)
+            // Isso evita enviar uma mensagem para o RabbitMQ de um usuário que não foi salvo.
             _publisher.Publish(user);
 
-            return user.Id;
+            // 7. Retorno do DTO
+            return new RegisterUserQuery
+            {
+                UserId = user.Id,
+                UserName = user.Name,
+                Email = user.Email,
+                Role = user.Role,
+                Token = _tokenService.GenerateToken(user)
+            };
         }
     }
 }

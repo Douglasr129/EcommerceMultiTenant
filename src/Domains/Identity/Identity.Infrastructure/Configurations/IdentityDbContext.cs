@@ -6,26 +6,29 @@ namespace Identity.Infrastructure.Configurations
     public class IdentityDbContext : DbContext
     {
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options) { }
+
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurar a tabela e colunas em minúsculas
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("users"); // Nome da tabela em minúsculas
+                entity.ToTable("users");
 
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("id"); // Nome da coluna em minúsculas
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
                     .IsRequired()
                     .HasMaxLength(255);
+
+                // DICA: Adicionar um índice único no email para performance e integridade
+                entity.HasIndex(e => e.Email).IsUnique();
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
@@ -44,12 +47,11 @@ namespace Identity.Infrastructure.Configurations
                 entity.Property(e => e.Active)
                     .HasColumnName("active")
                     .IsRequired();
-
-                // Adicione outras propriedades conforme necessário
-                // entity.Property(e => e.CreatedAt)
-                //     .HasColumnName("created_at");
             });
+
+            // Filtro Global: Ignora usuários inativos em todas as queries automaticamente
             modelBuilder.Entity<User>().HasQueryFilter(u => u.Active);
         }
     }
 }
+

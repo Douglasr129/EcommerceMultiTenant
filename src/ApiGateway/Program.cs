@@ -18,7 +18,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 await app.UseOcelot();
 app.Run();

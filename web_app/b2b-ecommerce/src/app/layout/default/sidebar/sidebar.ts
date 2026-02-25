@@ -14,7 +14,7 @@ import { NavItem } from "./menu/nav-item/nav-item";
   styleUrl: './sidebar.scss',
 })
 export class Sidebar implements OnInit {
-  role: string = 'Guest';
+  role: string = 'Customer';
   itensMenu: IMenu[] | any;
   toggleSidebar = signal(false);
   authService = inject(AuthService)

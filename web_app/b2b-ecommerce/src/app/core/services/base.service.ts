@@ -1,24 +1,17 @@
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { throwError } from 'rxjs';
+import { ToastService } from './toast.service';
 
-export abstract class BaseService {
+export abstract class BaseService extends ToastService {
 
   protected httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
     })
   };
-
-  /**
-   * Extrai os dados da resposta (útil para logs ou manipulações genéricas)
-   */
   protected extractData(response: any) {
     return response || {};
   }
-
-  /**
-   * Tratamento centralizado de erros HTTP
-   */
   protected serviceError(error: HttpErrorResponse) {
     let errorMessage = '';
 
@@ -32,8 +25,6 @@ export abstract class BaseService {
       // Erros do servidor (500, 503)
       errorMessage = 'Ocorreu um erro interno no servidor. Tente novamente mais tarde.';
     }
-
-    // Aqui você poderia injetar um serviço de Notificação (Toast) global
     console.error(`[API Error ${error.status}]: ${errorMessage}`, error);
 
     return throwError(() => ({

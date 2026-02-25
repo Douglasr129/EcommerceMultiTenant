@@ -7,9 +7,9 @@ export class AuthService {
 
   getRole(): string {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        return localStorage.getItem('role') || 'Guest';
+        return localStorage.getItem('role') || 'Customer';
       }
-      return 'Guest';
+      return 'Customer';
   }
 
   login(token: string, role: string) {

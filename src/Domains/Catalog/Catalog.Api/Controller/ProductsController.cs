@@ -25,7 +25,6 @@ namespace Catalog.Api.Controller
             UpdateStockHandler updateStockHandler,
             GetProductsByCategoryHandler getProductsByCategoryHandler,
             UpdateProductsByCategoryHandler updateProductsByCategoryHandler,
-            UpdateStockCommand updateStockCommand,
             ILinkService linkService) : ControllerBase
     {
         private readonly CreateProductHandler _createProductHandler = createProductHandler;
@@ -36,7 +35,6 @@ namespace Catalog.Api.Controller
         private readonly UpdateStockHandler _updateStockHandler = updateStockHandler;
         private readonly GetProductsByCategoryHandler _getProductsByCategoryHandler = getProductsByCategoryHandler;
         private readonly UpdateProductsByCategoryHandler _updateProductsByCategoryHandler = updateProductsByCategoryHandler;
-        private readonly UpdateStockCommand _updateStockCommand = updateStockCommand;
         private readonly ILinkService _linkService = linkService;
 
         [HttpPost]

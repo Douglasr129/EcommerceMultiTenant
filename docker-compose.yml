@@ -1,6 +1,11 @@
 ﻿services:
   postgres:
     image: postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d ecommerce_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     container_name: ecommerce_postgres
     environment:
       - POSTGRES_USER=admin
@@ -29,6 +34,11 @@
 
   rabbitmq:
     image: rabbitmq:3-management
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     container_name: ecommerce_rabbitmq
     ports:
       - "5672:5672"
@@ -49,11 +59,16 @@
     container_name: identity-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Host=ecommerce_postgres;Database=ecommerce_db;Username=admin;Password=admin123
+      - RabbitMQ__ConnectionString=amqp://admin:admin123@ecommerce_rabbitmq:5672/
     ports:
       - "5001:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - b2b-network
 
@@ -64,15 +79,16 @@
     container_name: catalog-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Host=ecommerce_postgres;Database=ecommerce_db;Username=admin;Password=admin123
-      - RabbitMqSettings__HostName=rabbitmq
-      - RabbitMqSettings__UserName=admin
-      - RabbitMqSettings__Password=admin123
+      - RabbitMQ__ConnectionString=amqp://admin:admin123@ecommerce_rabbitmq:5672/
     ports:
       - "5002:8080"
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - b2b-network
 

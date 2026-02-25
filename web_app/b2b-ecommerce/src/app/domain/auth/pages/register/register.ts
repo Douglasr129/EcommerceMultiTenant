@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, UpperCasePipe } from '@angular/common';
-import { ToastService } from '../../../../core/services/toast.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,7 +17,6 @@ export class Register {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private toast = inject(ToastService);
   private router = inject(Router)
 
   toggleRole() {
@@ -56,11 +54,11 @@ export class Register {
 
     this.authService.register(payload).subscribe({
       next: (res) => {
-        this.toast.showSuccess('Conta criada com sucesso!', `Bem vindo ${res.user.name}!`)
+        this.authService.showSuccess('Conta criada com sucesso!', `Bem vindo ${res.user.name}!`)
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.toast.showError('Erro!', `O correu um erro não tratado: ${err}!`)
+        this.authService.showError('Erro!', `O correu um erro não tratado: ${err}!`)
       },
     });
   }

@@ -38,7 +38,7 @@ namespace Catalog.Api.Configurations
             var evolve = new Evolve(
                 evolveConnection)
             {
-                Locations = ["../Catalog.Infrastructure/Migrations"],
+                Locations = ["Migrations"],
                 IsEraseDisabled = true
             };
             evolve.Migrate();

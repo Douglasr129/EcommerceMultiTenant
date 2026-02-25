@@ -1,22 +1,14 @@
 ﻿using EvolveDb;
+using Identity.Api.Configurations;
 using Identity.Api.Middlewares;
-using Identity.Application.Handlers;
-using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Configurations;
-using Identity.Infrastructure.Messaging;
-using Identity.Infrastructure.Repisitories;
-using Identity.Infrastructure.Repositories;
-using Identity.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Npgsql;
-using RabbitMQ.Client;
 using Scalar.AspNetCore;
 using System.Text;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,8 +41,9 @@ cnx.Close();
 
 var evolve = new Evolve(cnx, msg => Console.WriteLine(msg))
 {
-    Locations = ["../Identity.Infrastructure/Migrations"],
-    IsEraseDisabled = true
+    Locations = ["Migrations"],
+    IsEraseDisabled = true,
+    OutOfOrder = true
 };
 
 evolve.Migrate();
@@ -63,37 +56,11 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 
 // PASSO 5: Conexão com Rabbitmq
 
-builder.Services.AddSingleton<IConnection>(sp =>
-{
-    var factory = new ConnectionFactory
-    {
-        HostName = "localhost",
-        Port = 5672,
-        UserName = "admin",
-        Password = "admin123",
-        VirtualHost = "/",
-    };
-
-    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
-});
-
+var rabbitMqConnectionString = builder.Configuration["RabbitMQ:ConnectionString"];
+builder.Services.AddRabbitMqConnection(rabbitMqConnectionString!);
 
 // PASSO 5: Registrar serviços da aplicação
-// Unit of Work e Repositórios
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<UserCreatedPublisher>();
-// Handlers
-builder.Services.AddScoped<DeleteUserHandler>();
-builder.Services.AddScoped<GetUserHandler>();
-builder.Services.AddScoped<LoginUserHandler>();
-builder.Services.AddScoped<RegisterUserHandler>();
-builder.Services.AddScoped<UpdateRoleHandler>();
-builder.Services.AddScoped<UpdateUserHandler>();
-builder.Services.AddScoped<ITokenService>(provider =>
-    new TokenService(jwtSecretKey));
+builder.Services.AddDependencyInjection(jwtSecretKey);
 
 // PASSO 6: Configurar autenticação JWT
 builder.Services.AddAuthentication(options =>
@@ -157,7 +124,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -17,41 +17,25 @@ namespace Identity.Application.Handlers
 
         public async Task<RegisterUserQuery> Handle(RegisterUserCommand command)
         {
-            // 1. Validações básicas
             if (string.IsNullOrWhiteSpace(command.Email))
                 throw new ArgumentNullException(nameof(command.Email), "O e-mail é obrigatório.");
 
             if (string.IsNullOrWhiteSpace(command.Password))
                 throw new ArgumentNullException(nameof(command.Password), "A senha é obrigatória.");
-
-            // 2. Verificação de Duplicidade (Usando a UoW)
             var existingUser = await _uow.Users.GetByEmailAsync(command.Email);
             if (existingUser != null)
             {
-                // Lembra do ConflictException (409) que criamos? Ele brilha aqui.
                 throw new ConflictException("Este e-mail já está cadastrado.");
             }
-
-            // 3. Criação da Entidade
             var hash = _hasher.Hash(command.Password);
-
-            // Corrigi o typo de "Custumer" para "Customer"
             var user = new User(command.Name, command.Email, hash, command.Role ?? "Customer");
-
-            // 4. Adiciona ao contexto (Ainda não salva no banco)
             await _uow.Users.AddAsync(user);
-
-            // 5. Persistência Atômica
             var success = await _uow.CommitAsync();
 
             if (!success)
                 throw new InvalidOperationException("Não foi possível realizar o cadastro no momento.");
-
-            // 6. Publicação de Eventos (Ocorre APÓS o sucesso no banco)
-            // Isso evita enviar uma mensagem para o RabbitMQ de um usuário que não foi salvo.
             _publisher.Publish(user);
 
-            // 7. Retorno do DTO
             return new RegisterUserQuery
             {
                 UserId = user.Id,

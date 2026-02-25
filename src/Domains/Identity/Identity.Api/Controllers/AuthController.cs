@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController(
                         RegisterUserHandler resgisterHandler,
@@ -73,22 +73,6 @@ namespace Identity.Api.Controllers
 
             return Ok(response);
 
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-only")]
-        [ProducesResponseType(200)]
-        public IActionResult AdminEndpoint()
-        {
-            return Ok("Acesso permitido apenas para Admin.");
-        }
-
-        [Authorize(Policy = "ManagerPolicy")]
-        [HttpGet("manager-only")]
-        [ProducesResponseType(200)]
-        public IActionResult ManagerEndpoint()
-        {
-            return Ok("Acesso permitido apenas para Manager.");
         }
 
         [Authorize(Roles = "Admin")]

@@ -1,25 +1,23 @@
 {
   "Routes": [
-    // Rota para o Microserviço de IDENTITY (Auth)
     {
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "identity-api", // Nome do serviço no docker-compose
+          "Host": "identity-api",
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/identity/{everything}",
+      "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
     },
-    // Rota para o Microserviço de CATALOG
     {
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/catalog/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api", // Nome do serviço no docker-compose
+          "Host": "catalog-api",
           "Port": 8080
         }
       ],

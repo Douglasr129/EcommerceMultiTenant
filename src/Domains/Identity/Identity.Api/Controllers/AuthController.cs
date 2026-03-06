@@ -2,13 +2,16 @@
 using Identity.Application.Handlers;
 using Identity.Domain.Entities;
 using Identity.Domain.Exceptions;
+using Identity.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.Api.Controllers
 {
     [Route("api/auth")]
     [ApiController]
+    [EnableCors("AngularAppPolicy")]
     public class AuthController(
                         RegisterUserHandler resgisterHandler,
                         LoginUserHandler loginUserHandler,
@@ -16,6 +19,7 @@ namespace Identity.Api.Controllers
                         GetUserHandler getUserHandle,
                         UpdateUserHandler updateUserHandler,
                         DeleteUserHandler deleteUserHandler,
+                        ITokenService tokenService,
                         GetAllUserHandler getAllUserHandler) : ControllerBase
     {
         private readonly RegisterUserHandler _registerHandler = resgisterHandler;
@@ -24,6 +28,7 @@ namespace Identity.Api.Controllers
         private readonly UpdateUserHandler _updateUserHandler = updateUserHandler;
         private readonly GetUserHandler _getUserHandler = getUserHandle;
         private readonly DeleteUserHandler _deleteUserHandler = deleteUserHandler;
+        private readonly ITokenService _tokenService= tokenService;
         private readonly GetAllUserHandler _getAllUserHandler = getAllUserHandler;
         [HttpPost("register")]
         //[ProducesResponseType(200, Type = typeof(Object))]
@@ -40,11 +45,10 @@ namespace Identity.Api.Controllers
                 Email = command.Email,
                 Password = command.Password
             };
-            var token = await _loginHandler.Handle(commandlogin);
+            var user = await _loginHandler.Handle(commandlogin);
             var response = new
             {
-                UserId = id,
-                Token = token,
+                User = user,
                 Links = new[]
                 {
                     new { Rel = "self", Href = $"/api/auth/register" },
@@ -59,10 +63,10 @@ namespace Identity.Api.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
-            var token = await _loginHandler.Handle(command);
+            var user = await _loginHandler.Handle(command);
             var response = new
             {
-                Token = token,
+                User = user,
                 Links = new[]
                 {
                     new { Rel = "self", Href = $"/api/auth/login" },
@@ -75,8 +79,8 @@ namespace Identity.Api.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
-        [Authorize(Roles = "manager")]
+        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "MANAGER")]
         [HttpPut("update-role")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleCommand command)
@@ -89,6 +93,7 @@ namespace Identity.Api.Controllers
             return Ok(result);
         }
         [HttpPut("update")]
+        [Authorize]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand command)
         {
@@ -132,6 +137,8 @@ namespace Identity.Api.Controllers
         }
         [Authorize]
         [HttpGet("all")]
+        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "MANAGER")]
         public async Task<IActionResult> GetAll()
         {
             // 1. Identifica o executor através do Token

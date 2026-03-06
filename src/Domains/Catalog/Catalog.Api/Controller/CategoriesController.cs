@@ -6,6 +6,7 @@ using Catalog.Application.Handlers.CategoryHandlers;
 using Catalog.Application.Handlers.ProductHandlers;
 using Catalog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
@@ -17,7 +18,8 @@ namespace Catalog.Api.Controller
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "ADMIN,MANAGER")]
+    [EnableCors("AngularAppPolicy")]
     public class CategoriesController(
             CreateCategoryHandler createCategoryHandler, 
             GetCategoryAllHandler getCategoryAllHandler, 

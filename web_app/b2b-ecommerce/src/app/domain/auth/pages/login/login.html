@@ -1,6 +1,7 @@
 <div class="login-form">
   <h2>Entrar</h2>
-  <form [formGroup]="loginForm">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
     <div class="input-container">
       <input
         type="text"
@@ -8,9 +9,14 @@
         class="input"
         placeholder="exemplo@empresa.com"
         formControlName="email"
+        [class.error]="isFieldInvalid('email')"
       />
       <label for="email">E-mail</label>
+      @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+        <small class="error-message">Insira um e-mail válido</small>
+      }
     </div>
+
     <div class="input-container">
       <input
         [type]="showPassword ? 'text' : 'password'"
@@ -18,12 +24,27 @@
         class="input"
         placeholder="********"
         formControlName="password"
+        [class.error]="isFieldInvalid('password')"
       />
       <label for="password">Senha</label>
-      <button type="button" class="input-action-btn" (click)="showPassword = !showPassword">
-      <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+      <button
+        type="button"
+        class="input-action-btn"
+        (click)="showPassword = !showPassword"
+      >
+        <i
+          class="bi"
+          [class.bi-eye]="!showPassword"
+          [class.bi-eye-slash]="showPassword"
+        ></i>
       </button>
+      @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+        <small class="error-message">Mínimo de 8 caracteres</small>
+      }
     </div>
-    <button type="submit" class="btn btn-primary">Entrar</button>
+
+    <button type="submit" class="btn btn-primary" [disabled]="loading()">
+      {{ loading() ? 'Carregando...' : 'Entrar' }}
+    </button>
   </form>
 </div>

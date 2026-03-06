@@ -1,0 +1,93 @@
+<div class="product-container">
+  <header class="page-header">
+    <h2>Gerenciamento de Produtos</h2>
+    <button type="button" class="btn btn-primary" (click)="novoProduto()">
+      <i class="bi bi-plus-lg"></i> Novo Produto
+    </button>
+  </header>
+
+<section class="filters-section" [formGroup]="filterForm">
+  <div class="search-grid">
+
+    <div class="input-container">
+      <input type="text" id="search" class="input" formControlName="searchTerm" (keyup.enter)="onSearch()" />
+      <label for="search">Pesquisar</label>
+      <button class="input-action-btn" (click)="onSearch()"><i class="bi bi-search"></i></button>
+    </div>
+
+    <div class="input-container">
+      <input type="date" id="startDate" class="input" formControlName="startDate" (change)="onSearch()" />
+      <label for="startDate">Data Inicial</label>
+    </div>
+
+    <div class="input-container">
+      <input type="date" id="endDate" class="input" formControlName="endDate" (change)="onSearch()" />
+      <label for="endDate">Data Final</label>
+    </div>
+
+    <div class="status-toggle">
+      <button type="button"
+              [class.active]="filterForm.get('showInactive')?.value"
+              (click)="toggleStatus()"
+              class="btn-outline">
+        <i class="bi" [class.bi-toggle-on]="filterForm.get('showInactive')?.value" [class.bi-toggle-off]="!filterForm.get('showInactive')?.value"></i>
+        {{ filterForm.get('showInactive')?.value ? 'Exibindo Todos' : 'Apenas Ativos' }}
+      </button>
+    </div>
+  </div>
+</section>
+
+  <div class="grid-card">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th (click)="sort('name')" class="sortable">Produto <i class="bi bi-arrow-down-up"></i></th>
+          <th (click)="sort('price')" class="sortable">Valor <i class="bi bi-arrow-down-up"></i></th>
+          <th (click)="sort('createdAt')" class="sortable">Cadastro <i class="bi bi-arrow-down-up"></i></th>
+          <th>Status</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+          <tr [class.row-inactive]="!product.active">
+            <td>{{ product.name }}</td>
+            <td>{{ product.price | currency:'BRL' }}</td>
+            <td>{{ product.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="badge" [class.bg-success]="product.active" [class.bg-danger]="!product.active">
+                {{ product.active ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-icon" title="Visualizar" (click)="view(product.id)">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="btn-icon" title="Editar" (click)="edit(product.id)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn-icon text-danger"
+                      [title]="product.active ? 'Inativar' : 'Reativar'"
+                      (click)="toggleActive(product)">
+                <i class="bi" [class.bi-trash]="product.active" [class.bi-check-circle]="!product.active"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="text-center">Nenhum produto encontrado.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <footer class="pagination-container">
+      <span>Total: {{ totalItems() }} itens</span>
+      <div class="pagination-controls">
+        <button [disabled]="currentPage() === 1" (click)="changePage(-1)" class="btn-page">Anterior</button>
+        <span class="page-indicator">{{ currentPage() }} de {{ totalPages() }}</span>
+        <button [disabled]="currentPage() === totalPages()" (click)="changePage(1)" class="btn-page">Próximo</button>
+      </div>
+    </footer>
+  </div>
+</div>

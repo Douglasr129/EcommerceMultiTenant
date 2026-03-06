@@ -15,13 +15,10 @@ namespace Catalog.Api.Configurations
             services.AddAuthorization(options =>
             {
                 // Define as policies com nomes claros
-                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
-                options.AddPolicy("ManagerPolicy", policy => policy.RequireRole("Manager"));
-                options.AddPolicy("SellerPolicy", policy => policy.RequireRole("Seller"));
-                options.AddPolicy("CustomerPolicy", policy => policy.RequireRole("Customer"));
-
-                // Policy genérica para qualquer usuário autenticado
-                options.AddPolicy("AuthenticatedPolicy", policy => policy.RequireAuthenticatedUser());
+                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("ADMIN"));
+                options.AddPolicy("ManagerPolicy", policy => policy.RequireRole("MANAGER"));
+                options.AddPolicy("SellerPolicy", policy => policy.RequireRole("SELLER"));
+                options.AddPolicy("ClientPolicy", policy => policy.RequireRole("CLIENT"));
             });
             services.AddAuthentication(options =>
             {

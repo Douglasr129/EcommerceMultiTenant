@@ -1,14 +1,11 @@
-﻿using Catalog.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Catalog.Domain.Records;
 
 namespace Catalog.Domain.Interfaces
 {
     public interface IProductRepository
     {
         Task AddProduct(Product product);
-        Task<ICollection<Product>> GetProductAll();
+        Task<(IEnumerable<Product>, int)> GetProductAll(ProductFilters filters);
         Task<Product> GetProductById(Guid id);
         Task<Product> UpdateProduct(Product product);
         Task DeleteProduct(Guid id);

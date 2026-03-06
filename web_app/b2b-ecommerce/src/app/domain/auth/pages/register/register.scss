@@ -21,6 +21,7 @@
       .role-badge{
         font-weight: 700;
         color: var(--color-primary);
+        text-transform: uppercase;
       }
     }
     .fader-track {
@@ -75,6 +76,7 @@
         &.is-vendedor {
           transform: translateX(135px); // Desliza para a direita
           color: var(--color-secondary);
+
         }
       }
     }

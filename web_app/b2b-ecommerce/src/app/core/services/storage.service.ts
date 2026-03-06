@@ -1,58 +1,38 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { SsrCookieService } from 'ngx-cookie-service-ssr';
+import { StorageKeys } from '../constants/storage.constants';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class StorageService {
-
-  // --- LOCAL STORAGE (Cache de longa duração) ---
-
-  set(key: string, value: any): void {
-    const data = typeof value === 'string' ? value : JSON.stringify(value);
-    localStorage.setItem(key, data);
+  private cookieService = inject(SsrCookieService);
+  setObject(key: StorageKeys, value: any): void {
+    const strValue = JSON.stringify(value);
+    this.cookieService.set(key, strValue, { expires: 7, path: '/' });
   }
-
-  get<T>(key: string): T | null {
-    const data = localStorage.getItem(key);
-    if (!data) return null;
-
+  getObject<T>(key: StorageKeys): T | null {
+    const value = this.cookieService.get(key);
+    if (!value) return null;
     try {
-      return JSON.parse(data) as T;
-    } catch {
-      return data as unknown as T;
+      const decoded = value.startsWith('%') ? decodeURIComponent(value) : value;
+      return (JSON.parse(decoded) as T) || null;
+    } catch (e) {
+      console.error('Erro ao fazer parse do Cookie:', e);
+      return null;
     }
   }
-
-  remove(key: string): void {
-    localStorage.removeItem(key);
+  setRaw(key: StorageKeys, value: string): void {
+    this.cookieService.set(key, value, { expires: 7, path: '/' });
   }
-
-  clear(): void {
-    localStorage.clear();
+  getRaw(key: StorageKeys): string | null {
+    return this.cookieService.get(key) || null;
   }
-
-  // --- COOKIES (Segurança e Token) ---
-  // Nota: Cookies são ideais para Tokens que precisam ser lidos pelo servidor (SSR)
-
-  setCookie(name: string, value: string, days: number = 7): void {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = "; expires=" + date.toUTCString();
-    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+  deleteCookie(key: StorageKeys | string): void {
+    this.cookieService.delete(key, '/');
   }
-
-  getCookie(name: string): string | null {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  deleteAll(): void {
+    this.cookieService.deleteAll('/');
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
     }
-    return null;
-  }
-
-  deleteCookie(name: string): void {
-    document.cookie = name + '=; Max-Age=-99999999;';
   }
 }

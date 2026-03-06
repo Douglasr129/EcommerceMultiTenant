@@ -11,7 +11,21 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
-
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    // Adicione cdnjs.cloudflare.com aqui:
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; " +
+    // Adicione cdnjs.cloudflare.com aqui:
+    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; " +
+    "connect-src 'self' http://localhost:4200 ws://localhost:4200 http://localhost:4000 http://localhost:8000; " +
+    "img-src 'self' data: blob:; " +
+    // Se o Font Awesome carregar ícones via arquivos de fonte (.woff), adicione:
+    "font-src 'self' https://cdnjs.cloudflare.com;"
+  );
+  next();
+});
 /**
  * Example Express Rest API endpoints can be defined here.
  * Uncomment and define endpoints as necessary.

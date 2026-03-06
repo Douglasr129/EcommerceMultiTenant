@@ -2,6 +2,6 @@ export interface IMenu{
 title: string;
   icon?: string;
   link?: string;
-  role: 'Admin' | 'Manager' | 'Seller' | 'Client' | 'All';
+  role: 'ADMIN' | 'MANAGER' | 'SELLER' | 'CLIENT' ;
   children?: IMenu[];
 }

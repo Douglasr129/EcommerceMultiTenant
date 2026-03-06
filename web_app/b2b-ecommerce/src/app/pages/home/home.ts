@@ -1,48 +1,52 @@
-import { ViewportScroller } from '@angular/common';
-import { Component } from '@angular/core';
+import {
+  isPlatformBrowser,
+  ViewportScroller,
+  CommonModule,
+} from '@angular/common';
+import { Component, inject, PLATFORM_ID, HostListener } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { About } from '../about/about';
 import { Contact } from '../contact/contact';
 import { Features } from '../features/features';
-import { RouterLink } from "@angular/router";
+import { AppStateService } from '../../core/services/app-states.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-home',
-  imports: [
-    About,
-    Contact,
-    Features,
-    RouterLink
-],
+  standalone: true,
+  imports: [CommonModule, About, Contact, Features, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home {
+  public state = inject(AppStateService);
+  private scroller = inject(ViewportScroller);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private toast = inject(ToastService);
   isSidebarCollapsed = false;
-  isDarkTheme = false;
+  testeCookies() {
+    var nome = this.state.userData()?.userName
+    this.toast.showInfo(nome?nome:'Deu ruim')
+  }
   activeCard: string = 'cliente';
-  // Menu definido internamente
   menuLinks = [
     { title: 'Início', fragment: 'inicio', icon: 'bi-house' },
     { title: 'Sobre', fragment: 'sobre', icon: 'bi-info-circle' },
     { title: 'Funcionalidades', fragment: 'features', icon: 'bi-star' },
     { title: 'Contato', fragment: 'contato', icon: 'bi-envelope' },
   ];
-
-  constructor(private scroller: ViewportScroller) {}
-
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
-
   scrollTo(fragment: string) {
     this.scroller.scrollToAnchor(fragment);
-    // Opcional: fechar ao clicar em telas pequenas
-    if (window.innerWidth < 768) this.isSidebarCollapsed = true;
+    if (this.isBrowser && window.innerWidth < 768) {
+      this.isSidebarCollapsed = true;
+    }
   }
   toggleTheme() {
-    this.isDarkTheme = !this.isDarkTheme;
-    // Opcional: Salvar no localStorage para persistir
-    document.body.classList.toggle('dark-theme', this.isDarkTheme);
+    const THEME_MODE = this.state.isDark() ? 'light' : 'dark';
+    this.state.updateTheme(THEME_MODE);
   }
   setActiveCard(type: string) {
     this.activeCard = type;

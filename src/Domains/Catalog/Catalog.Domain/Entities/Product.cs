@@ -11,6 +11,8 @@ public class Product
 
     [Column("name", TypeName = "varchar(255)")]
     public string Name { get; private set; }
+    [Column("description", TypeName = "varchar(255)")]
+    public string Description { get; set; }
     public Money Price { get; private set; }
 
     [Column("stock", TypeName = "integer")]
@@ -19,6 +21,8 @@ public class Product
 
     [Column("category_id", TypeName = "uuid")]
     public Guid? CategoryId { get; private set; }
+    public bool Active { get; set; }
+
     // Construtor sem parâmetros (necessário para o EF)
     public Product()
     {
@@ -44,10 +48,11 @@ public class Product
         Price = price ?? throw new DomainException("Preço inválido");
         Stock = stock;
         CategoryId = categoryId;
+        Active = true;
     }
     public void UpdateName(string name)
     {
-        if (name ==null || name.Length < 3)
+        if (name == null || name.Length < 3)
             throw new DomainException("Nome invalido");
         Name = name;
     }
@@ -68,5 +73,8 @@ public class Product
     public void UpdateCategory(Guid categoryID)
     {
         CategoryId = categoryID;
+    }
+    public void UpdateStatus(bool active) { 
+        Active = active; 
     }
 }

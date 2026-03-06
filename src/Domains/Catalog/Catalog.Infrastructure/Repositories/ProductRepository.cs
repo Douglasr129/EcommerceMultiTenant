@@ -1,5 +1,6 @@
 ﻿using Catalog.Domain.Exceptions;
 using Catalog.Domain.Interfaces;
+using Catalog.Domain.Records;
 using Catalog.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,11 +44,29 @@ namespace Catalog.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ICollection<Product>> GetProductAll()
+        public async Task<(IEnumerable<Product>, int)> GetProductAll(ProductFilters filters)
         {
-            return await _context.Products
-                .AsNoTracking()
+            var query = _context.Products.AsQueryable();
+            // Filtros
+            if (!string.IsNullOrEmpty(filters.SearchTerm))
+                query = query.Where(p => p.Name.Contains(filters.SearchTerm));
+
+            if (!filters.ShowInactive)
+                query = query.Where(p => p.Active);
+
+            // Ordenação Dinâmica
+            query = filters.Order == "asc"
+                ? query.OrderBy(p => EF.Property<object>(p, filters.Sort))
+                : query.OrderByDescending(p => EF.Property<object>(p, filters.Sort));
+
+            var total = await query.CountAsync();
+
+            var data = await query
+                .Skip((filters.Page - 1) * filters.PageSize)
+                .Take(filters.PageSize)
                 .ToListAsync();
+
+            return (data, total);
         }
 
         public async Task<Product> GetProductById(Guid id)

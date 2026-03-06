@@ -5,20 +5,24 @@
     <div class="role-selector-container">
       <label class="role-title">
         Perfil selecionado:
-        <span class="role-badge" [class.vendedor]="userRole === 'vendedor'">
-          {{ userRole | uppercase }}
+        <span class="role-badge" [class.vendedor]="userRole === 'SELLER'">
+          @if (userRole === 'SELLER') {
+            Vendedor
+          }@else {
+            Cliente
+          }
         </span>
       </label>
       <div class="fader-track" (click)="toggleRole()">
         <div class="role-labels">
-          <span [class.active]="userRole === 'cliente'">Cliente</span>
-          <span [class.active]="userRole === 'vendedor'">Vendedor</span>
+          <span [class.active]="userRole === 'CLIENT'">Cliente</span>
+          <span [class.active]="userRole === 'SELLER'">Vendedor</span>
         </div>
-        <div class="fader-thumb" [class.is-vendedor]="userRole === 'vendedor'">
+        <div class="fader-thumb" [class.is-vendedor]="userRole === 'SELLER'">
           <i
             class="bi"
-            [class.bi-person]="userRole === 'cliente'"
-            [class.bi-briefcase]="userRole === 'vendedor'"
+            [class.bi-person]="userRole === 'CLIENT'"
+            [class.bi-briefcase]="userRole === 'SELLER'"
           ></i>
         </div>
       </div>
@@ -37,7 +41,6 @@
         <small class="error-message">O nome é obrigatório (mín. 3 caracteres)</small>
       }
     </div>
-
     <div class="input-container">
       <input
         type="text"

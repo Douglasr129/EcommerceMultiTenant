@@ -1,4 +1,4 @@
-import { Component, inject, TemplateRef } from '@angular/core';
+import { Component, inject, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ToastService, ToastInfo } from '../../../core/services/toast.service';
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgTemplateOutlet } from '@angular/common';
@@ -6,6 +6,7 @@ import { NgTemplateOutlet } from '@angular/common';
 @Component({
   selector: 'app-toasts-container',
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [NgbToastModule, NgTemplateOutlet],
   template: `
     @for (toast of toastService.toasts; track toast) {

@@ -3,7 +3,9 @@ using Catalog.Api.Models;
 using Catalog.Api.Services;
 using Catalog.Application.Commands.ProductCommands;
 using Catalog.Application.Handlers.ProductHandlers;
+using Catalog.Domain.Records;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controller
@@ -15,7 +17,8 @@ namespace Catalog.Api.Controller
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "ADMIN,MANAGER")]
+    [EnableCors("AngularAppPolicy")]
     public class ProductsController(
             CreateProductHandler createProductHandler,
             GetProductAllHandler getProductAllHandler,
@@ -90,13 +93,16 @@ namespace Catalog.Api.Controller
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult<ICollection<Product>>> GetProductAll()
+        public async Task<ActionResult<ICollection<Product>>> GetProductAll([FromQuery] ProductFilters filters)
         {
-            var products = await _getProductAllHandler.Handle();
+            var (products, totalCount) = await _getProductAllHandler.Handle(filters);
 
             var response = new
             {
-                Products = products.Select(p =>
+                Total = totalCount,
+                Page = filters.Page,
+                PageSize = filters.PageSize,
+                Data = products.Select(p =>
                 {
                     var productResponse = ProductResponse.FromProduct(p);
                     productResponse.Links = _linkService.GenerateProductLinks(p.Id);

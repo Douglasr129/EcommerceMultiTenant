@@ -14,24 +14,24 @@ import { NavItem } from "./menu/nav-item/nav-item";
   styleUrl: './sidebar.scss',
 })
 export class Sidebar implements OnInit {
-  role: string = 'Customer';
+  role?: string | null;
   itensMenu: IMenu[] | any;
   toggleSidebar = signal(false);
   authService = inject(AuthService)
 
   ngOnInit(): void {
-    this.role = this.authService.getRole();
+    this.role = this.authService.getUserRole();
     switch (this.role) {
-      case 'Admin':
+      case 'ADMIN':
         this.itensMenu = ADMIN_DATA;
         break;
-      case 'Manager':
+      case 'MANAGER':
         this.itensMenu = MANAGER_DATA;
         break;
-      case 'Seller':
+      case 'SELLER':
         this.itensMenu = SELLER_DATA;
         break;
-      case 'Client':
+      case 'CLIENT':
         this.itensMenu = CLIENT_DATA;
         break;
     }

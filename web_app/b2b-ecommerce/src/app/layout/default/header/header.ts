@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { AppStateService } from '../../../core/services/app-states.service';
 
 @Component({
   selector: 'app-header',
@@ -7,9 +8,10 @@ import { Component, signal } from '@angular/core';
   styleUrl: './header.scss',
 })
 export class Header {
+  private states = inject(AppStateService);
   isDarkTheme = signal(false);
-isCollapsed: any;
-
+  isCollapsed: any;
+  user = this.states.userData();
   toggleTheme() {
     // 1. Inverte o valor do signal
     this.isDarkTheme.update((current) => !current);

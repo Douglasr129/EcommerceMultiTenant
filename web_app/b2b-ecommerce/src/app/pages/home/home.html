@@ -28,12 +28,12 @@
         <button
           class="theme-toggle"
           (click)="toggleTheme()"
-          [title]="isDarkTheme ? 'Modo Claro' : 'Modo Escuro'"
+          [title]="state.isDark()? 'Modo Claro' : 'Modo Escuro'"
         >
           <i
             class="bi"
-            [class.bi-sun-fill]="isDarkTheme"
-            [class.bi-moon-stars-fill]="!isDarkTheme"
+            [class.bi-sun-fill]="state.isDark()"
+            [class.bi-moon-stars-fill]="!state.isDark()"
           ></i>
         </button>
         <div>
@@ -53,7 +53,6 @@
           <p class="lead mb-5 color-text">
             Conectando indústrias, distribuidores e varejistas em um só lugar.
           </p>
-
           <div class="row g-4 justify-content-center">
             <!--#####################################################################################-->
             <div
@@ -95,6 +94,7 @@
                     class="btn w-100 py-2"
                     [class.btn-primary]="activeCard === 'cliente'"
                     [class.btn-outline-secondary]="activeCard !== 'cliente'"
+                    routerLink="./client"
                   >
                     Painel do Comprador
                   </button>
@@ -141,6 +141,7 @@
                     class="btn w-100 py-2"
                     [class.btn-primary]="activeCard === 'vendedor'"
                     [class.btn-outline-secondary]="activeCard !== 'vendedor'"
+                    routerLink="./seller"
                   >
                     Portal do Vendedor
                   </button>

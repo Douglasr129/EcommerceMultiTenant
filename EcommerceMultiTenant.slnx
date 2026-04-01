@@ -30,25 +30,46 @@
     <Project Path="src/Tests/Messaging.Tests/Messaging.Tests.csproj" Id="cd099238-f34c-4a47-ac73-7676a1b03acb" />
   </Folder>
   <Folder Name="/web_app/">
-    <Project Path="web_app/b2b-ecommerce/" Type="Website" DisplayName="b2b-ecommerce">
+    <Project Path="web_app/domain/" Type="Website" DisplayName="domain">
       <BuildType Project="Debug" />
       <Properties Name="WebsiteProperties">
         <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
         <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
         <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;web_app\b2b-ecommerce\&quot;" />
-        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_49883\&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;web_app\domain\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_49825\&quot;" />
         <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_49883&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_49825&quot;" />
         <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
         <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
         <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;web_app\b2b-ecommerce\&quot;" />
-        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_49883\&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;web_app\domain\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_49825\&quot;" />
         <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_49883&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_49825&quot;" />
         <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8&quot;" />
-        <Property Name="VWDPort" Value="&quot;49883&quot;" />
+        <Property Name="VWDPort" Value="&quot;49825&quot;" />
+      </Properties>
+    </Project>
+    <Project Path="web_app/multi-tenant-host/" Type="Website" DisplayName="multi-tenant-host">
+      <BuildType Project="Debug" />
+      <Properties Name="WebsiteProperties">
+        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;web_app\multi-tenant-host\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_56525\&quot;" />
+        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_56525&quot;" />
+        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;web_app\multi-tenant-host\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_56525\&quot;" />
+        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_56525&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8&quot;" />
+        <Property Name="VWDPort" Value="&quot;56525&quot;" />
       </Properties>
     </Project>
   </Folder>

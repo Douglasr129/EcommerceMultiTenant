@@ -1,0 +1,134 @@
+<section id="contato" class="section contact-page">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <h6 class="text-accent fw-bold text-uppercase text-primary">Contato</h6>
+        <h2 class="display-5 fw-bold mb-4 color-text">Vamos impulsionar seu negócio?</h2>
+        <p class="color-text mb-5">
+          Nossa equipe comercial está pronta para desenhar uma proposta personalizada para sua rede
+          de lojas ou indústria.
+        </p>
+
+         <div class="contact-info">
+          <div class="d-flex align-items-center mb-4">
+            <div class="icon-circle bg-primary text-white me-3">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+              <h5 class="mb-0 color-text">Localização</h5>
+              <p class="color-text mb-0">Av. Industrial, 1500 - São Paulo, SP</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center mb-4">
+            <div class="icon-circle bg-success text-white me-3">
+              <i class="bi bi-whatsapp"></i>
+            </div>
+            <div>
+              <h5 class="mb-0 color-text">WhatsApp Comercial</h5>
+              <p class="color-text mb-0">(11) 99999-8888</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-info text-white me-3">
+              <i class="bi bi-envelope-at"></i>
+            </div>
+            <div>
+              <h5 class="mb-0 color-text">E-mail</h5>
+              <p class="color-text mb-0">comercial@seub2b.com.br</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="contact-card shadow-lg p-4 p-md-5">
+          <form [formGroup]="contactForm" (ngSubmit)="onContactSubmit()">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="input-container">
+                  <input
+                    type="text"
+                    id="name"
+                    class="input"
+                    placeholder="Ex: João Silva"
+                    formControlName="name"
+                    [class.error]="isFieldInvalid('name')"
+                  />
+                  <label for="name">Seu Nome</label>
+                  @if (contactForm.get('name')?.touched && contactForm.get('name')?.invalid) {
+                    <small class="error-message">O nome é obrigatório</small>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="input-container">
+                  <input
+                    type="text"
+                    id="cnpj"
+                    class="input"
+                    placeholder="00.000.000/0000-00"
+                    formControlName="cnpj"
+                    [class.error]="isFieldInvalid('cnpj')"
+                  />
+                  <label for="cnpj">CNPJ da Empresa</label>
+                  @if (contactForm.get('cnpj')?.touched && contactForm.get('cnpj')?.invalid) {
+                    <small class="error-message">CNPJ inválido</small>
+                  }
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="input-container">
+                  <input
+                    type="email"
+                    id="emailCorp"
+                    class="input"
+                    placeholder="joao@empresa.com.br"
+                    formControlName="email"
+                    [class.error]="isFieldInvalid('email')"
+                  />
+                  <label for="emailCorp">E-mail Corporativo</label>
+                  @if (contactForm.get('email')?.touched && contactForm.get('email')?.invalid) {
+                    <small class="error-message">Insira um e-mail corporativo válido</small>
+                  }
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="input-container textarea-container" style="max-width: 100%">
+                  <textarea
+                    id="message"
+                    class="input textarea-input"
+                    placeholder=" "
+                    formControlName="message"
+                    [class.error]="isFieldInvalid('message')"
+                  >
+                  </textarea>
+                  <label for="message">Como podemos ajudar?</label>
+
+                  @if (isFieldInvalid('message')) {
+                    <small class="error-message">Conte-nos um pouco sobre sua necessidade</small>
+                  }
+                </div>
+              </div>
+
+              <div class="col-12 mt-4">
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 py-3 fw-bold"
+                  [disabled]="loading()"
+                >
+                  {{ loading() ? 'Enviando...' : 'Enviar Solicitação' }}
+                  <i class="bi bi-send ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
